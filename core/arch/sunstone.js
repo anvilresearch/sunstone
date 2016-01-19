@@ -82,6 +82,13 @@ class Sunstone {
     // assemble the server and create a reference
     this.server = this[injector].get('server')
     this.settings = this[injector].get('settings')
+
+    // register routes
+    this[injector].find({
+      type: 'router'
+    }).forEach((router) => {
+      router.mount()
+    })
   }
 
   /**
