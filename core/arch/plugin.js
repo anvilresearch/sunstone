@@ -4,6 +4,7 @@
  * Dependencies
  */
 var _ = require('lodash')
+var path = require('path')
 
 /**
  * Symbols
@@ -51,6 +52,18 @@ class Plugin {
       })
     })
 
+    return this
+  }
+
+  /**
+   * Include
+   */
+
+  include () {
+    let segments = Array.prototype.slice.call(arguments, this.include.length)
+    let filepath = path.join.apply(null, segments)
+    console.log(filepath)
+    require(filepath)(this)
     return this
   }
 
