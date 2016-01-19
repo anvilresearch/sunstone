@@ -1,6 +1,12 @@
 'use strict'
 
 /**
+ * Dependencies
+ */
+
+var _ = require('lodash')
+
+/**
  * Symbols
  */
 let injector = Symbol()
@@ -36,9 +42,13 @@ class Plugin {
    * Require
    */
   require (modules) {
-    modules.forEach((name) => {
-      this.factory(name, function () {
-        return require(name)
+    if (Array.isArray(modules)) {
+      modules = _.zipObject(modules, modules)
+    }
+
+    Object.keys(modules).forEach((key) => {
+      this.factory(key, function () {
+        return require(modules[key])
       })
     })
 

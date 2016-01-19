@@ -21,20 +21,11 @@ module.exports = function (sunstone) {
     return optimist.argv
   })
 
-  .factory('Defaults', () => {
-    return require('../../core/data/defaults')
-  })
-
-  .factory('Initializer', () => {
-    return require('../../core/data/initializer')
-  })
-
-  .factory('Model', () => {
-    return require('../../core/data/model')
-  })
-
-  .factory('Resource', () => {
-    return require('../../core/data/resource')
+  .require({
+    'Defaults': '../../core/data/defaults',
+    'Initializer': '../../core/data/initializer',
+    'Model': '../../core/data/model',
+    'Resource': '../../core/data/resource'
   })
 
 }
