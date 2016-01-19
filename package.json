@@ -15,5 +15,14 @@
   "bugs": {
     "url": "https://gitlab.com/anvilresearch/sunstone/issues"
   },
-  "homepage": "https://gitlab.com/anvilresearch/sunstone#README"
+  "homepage": "https://gitlab.com/anvilresearch/sunstone#README",
+  "dependencies": {
+    "express": "^4.13.3",
+    "glob": "^6.0.4",
+    "lodash": "^4.0.0",
+    "lodash.pluck": "^3.1.2",
+    "lx-valid": "^0.5.6",
+    "mkdirp": "^0.5.1",
+    "optimist": "^0.6.1"
+  }
 }
