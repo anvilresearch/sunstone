@@ -1,0 +1,19 @@
+{
+  "name": "sunstone",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/anvilresearch/sunstone.git"
+  },
+  "author": "Anvil Research, Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/anvilresearch/sunstone/issues"
+  },
+  "homepage": "https://gitlab.com/anvilresearch/sunstone#README"
+}
