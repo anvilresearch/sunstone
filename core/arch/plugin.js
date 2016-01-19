@@ -125,7 +125,7 @@ class Plugin {
       name,
       type: 'router',
       plugin: this.name,
-      mutator
+      factory
     })
 
     return this
@@ -139,7 +139,7 @@ class Plugin {
       name,
       type: 'connector',
       plugin: this.name,
-      mutator
+      factory
     })
 
     return this
