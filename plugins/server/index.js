@@ -156,32 +156,18 @@ module.exports = function (sunstone) {
   })
 
   /**
+   * Router
+   */
+  .include(__dirname, './router')
+
+  /**
    * server
    */
-  .factory('server', function (express,settings) {
+  .factory('server', function (express, settings) {
     let server = express()
 
     // build up the server
     return server
-  })
-
-  /**
-   * Router
-   */
-  .factory('Router', function (express, server) {
-    let Router = express.Router
-
-    Router.mount = function () {
-      server.use(this)
-    }
-
-    Router.unmount = function () {
-      let stack = server._router.stack
-      let index = stack.indexOf(this)
-      stack.splice(index, 1)
-    }
-
-    return Router
   })
 
   /**
