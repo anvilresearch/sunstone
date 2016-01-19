@@ -51,10 +51,10 @@ class Sunstone {
   /**
    * Require
    */
-  require() {
+  require () {
     let segments = Array.prototype.slice.call(arguments, this.require.length)
     let directory = path.join.apply(null, segments)
-    let pattern = path.join(directory, '**/*.js')
+    let pattern = path.join(directory, '**/index.js')
     let plugins = glob.sync(path.resolve(pattern))
 
     plugins.forEach((plugin) => {
