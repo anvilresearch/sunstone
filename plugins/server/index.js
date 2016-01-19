@@ -151,10 +151,7 @@ module.exports = function (sunstone) {
    * settings
    */
   .factory('settings', function (Settings,path) {
-
-    let settings = Settings.read(path.join(process.cwd(), 'settings.json'))
-    console.log('SETTINGS', settings)
-    return settings
+    return Settings.read(path.join(process.cwd(), 'settings.json'))
   })
 
   /**
