@@ -59,8 +59,9 @@ module.exports = function (sunstone) {
       /**
        * Setter
        *
-       * Looks for values in command line options, environment variables, and the source
-       * object (config file), in that order. If none are found, a default value is set.
+       * Looks for values in command line options, environment variables, and the
+       * source object (config file), in that order. If none are found, a default
+       * value is set.
        */
       static set (key, defaultValue, formatter) {
         return function (source) {
@@ -159,8 +160,41 @@ module.exports = function (sunstone) {
    */
   .factory('server', function (express,settings) {
     let server = express()
+
     // build up the server
     return server
+  })
+
+  /**
+   * Router
+   */
+  .factory('Router', function (express, server) {
+    let Router = express.Router
+
+    Router.mount = function () {
+      server.use(this)
+    }
+
+    Router.unmount = function () {
+      let stack = server._router.stack
+      let index = stack.indexOf(this)
+      stack.splice(index, 1)
+    }
+
+    return Router
+  })
+
+  /**
+   * Status
+   */
+  .router('status', function (Router) {
+    let router = Router()
+
+    router.get('/', function (req, res, next) {
+      res.json({ status: 'OK' })
+    })
+
+    return router
   })
 
 }
