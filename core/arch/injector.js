@@ -1,5 +1,10 @@
 'use strict'
 
+/**
+ * Dependencies
+ */
+
+var _ = require('lodash')
 
 /**
  * List dependencies by stringifying and parsing the factory function.
@@ -99,6 +104,16 @@ class Injector {
       return value
     }
   }
+
+  /**
+   * Find
+   */
+  find (predicate) {
+    return _.filter(this[dependencies], predicate).map((descriptor) => {
+      return this.get(descriptor.name)
+    })
+  }
+
 }
 
 module.exports = Injector
