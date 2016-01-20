@@ -6,8 +6,10 @@ module.exports = function (sunstone) {
    * Plugin
    */
   sunstone.plugin('Server', {
-    version: '0.0.0'
-    // requires: ['Data']
+    version: '0.0.1',
+    dependencies: {
+      'Data': '>=0.0.1'
+    }
   })
 
   /**

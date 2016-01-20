@@ -6,7 +6,7 @@ module.exports = function (sunstone) {
    * Data plugin
    */
   sunstone.plugin('Data', {
-    version: '0.0.0'
+    version: '0.0.1'
   })
 
   .require([
