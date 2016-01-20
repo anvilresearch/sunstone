@@ -9,181 +9,96 @@ module.exports = function (sunstone) {
     version: '0.0.1',
     dependencies: {
       'Data': '>=0.0.1'
-    }
+    },
+    // IDEA:
+    //providedInterfaces: {}
+    //requiredInterfaces: {}
   })
+
+  /**
+   * Includes
+   */
+  .include(__dirname, './redis')
+  .include(__dirname, './router')
+  .include(__dirname, './session')
+  .include(__dirname, './settings')
 
   /**
    * Module dependencies
    */
-  .require([
-    'express'
-  ])
-
-  /**
-   * Settings
-   */
-  .factory('Settings', function (Model, Initializer, argv, mkdirp, fs, path, crypto) {
-
-    class Settings extends Model {
-
-      static get schema () {
-        return {
-          host: {
-            type: 'string',
-            set: Settings.set('host', 'localhost')
-          },
-          port: {
-            type: 'number',
-            set: Settings.set('port', 3000, parseInt)
-          },
-          redis: {
-            type: 'object',
-            properties: {
-              host: {
-                type: 'string',
-                set: Settings.set('redis-host', 'localhost')
-              },
-              port: {
-                type: 'number',
-                set: Settings.set('redis-port', 6379, parseInt)
-              }
-            }
-          },
-          cookie_secret: {
-            type: 'string',
-            default: () => {
-              return crypto.randomBytes(10).toString('hex')
-            }
-          }
-        }
-      }
-
-      /**
-       * Setter
-       *
-       * Looks for values in command line options, environment variables, and the
-       * source object (config file), in that order. If none are found, a default
-       * value is set.
-       */
-      static set (key, defaultValue, formatter) {
-        return function (source) {
-          let value =
-            argv[key] ||
-            process.env[key.toUpperCase().replace('-', '_')] ||
-            source[key] ||
-            defaultValue
-
-          Initializer.setDeepProperty(
-            this,
-            key.split('-').slice(-1),
-            formatter ? formatter(value) : value
-          )
-        }
-      }
-
-      /**
-       * Read
-       */
-      static read (filepath) {
-        let writeAfterValidate = false
-
-        try {
-          // attempt to load and parse the given file
-          var data = this.deserialize(fs.readFileSync(filepath))
-        } catch (error) {
-          // ignore error due to non-existing file
-          if (error.code !== 'ENOENT') { throw error }
-
-          // indicate the config should be written to
-          // filepath after validation
-          writeAfterValidate = true
-        }
-
-        // instantiate a config instance
-        let settings = new Settings(data)
-
-        // validate
-        let validation = settings.validate()
-        if (!validation.valid) {
-          console.log(validation)
-          process.exit(1)
-        }
-
-        // write config to file if indicated
-        if (writeAfterValidate) {
-          settings.write(filepath)
-        }
-
-        // return the configuration
-        return settings
-      }
-
-      /**
-       * Write
-       */
-      write (filepath) {
-        let data = Settings.serialize(this)
-        mkdirp.sync(path.dirname(filepath))
-        fs.writeFileSync(filepath, data)
-      }
-
-      /**
-       * Serialize
-       */
-      static serialize (obj) {
-        return JSON.stringify(obj, false, 2)
-      }
-
-      /**
-       * Deserialize
-       */
-      static deserialize (data) {
-        try {
-          return JSON.parse(data)
-        } catch (error) {
-          throw (error)
-        }
-      }
-
-    }
-
-    return Settings
+  .require({
+    'bodyParser': 'body-parser',
+    'connectFlash': 'connect-flash',
+    'consolidate': 'consolidate',
+    'cookieParser': 'cookie-parser',
+    'cors': 'cors',
+    'express': 'express',
   })
 
   /**
    * settings
    */
-  .factory('settings', function (Settings,path) {
+  .factory('settings', function (Settings, path) {
     return Settings.read(path.join(process.cwd(), 'settings.json'))
   })
 
   /**
-   * Router
-   */
-  .include(__dirname, './router')
-
-  /**
    * server
    */
-  .factory('server', function (express, settings) {
+  .factory('server', function (
+    bodyParser,
+    connectFlash,
+    consolidate,
+    cookieParser,
+    cors,
+    express,
+    session,
+    settings
+  ) {
+
+    /**
+     * Server
+     */
     let server = express()
 
-    // build up the server
+    /**
+     * Disable default header
+     */
+    server.disable('x-powered-by')
+
+    /**
+     * Views configuration
+     * TODO
+     */
+
+    /**
+     * Request parsing
+     */
+    server.use(cookieParser(settings.cookie_secret))
+    server.use(bodyParser.urlencoded({ extended: false }))
+    server.use(bodyParser.json())
+
+    /**
+     * Express Session
+     */
+    server.use(session)
+
+    /**
+     * Flash messaging
+     */
+
+    server.use(connectFlash())
+
+    /**
+     * Cross-Origin Support
+     */
+
+    server.use(cors())
+
+    /**
+     * Ready
+     */
     return server
   })
-
-  /**
-   * Status
-   */
-  .router('status', function (Router) {
-    let router = Router()
-
-    router.get('/', function (req, res, next) {
-      res.json({ status: 'OK' })
-    })
-
-    return router
-  })
-
 }
 

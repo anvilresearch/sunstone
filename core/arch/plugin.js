@@ -62,7 +62,6 @@ class Plugin {
   include () {
     let segments = Array.prototype.slice.call(arguments, this.include.length)
     let filepath = path.join.apply(null, segments)
-    console.log(filepath)
     require(filepath)(this)
     return this
   }
