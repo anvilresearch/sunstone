@@ -34,7 +34,13 @@ class Injector {
    * Constructor
    */
   constructor () {
-    this[dependencies] = {}
+    this[dependencies] = {
+      // Allow the injection of the injector itself
+      injector: {
+        name: 'injector',
+        value: this
+      }
+    }
   }
 
   /**
