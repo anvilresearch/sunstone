@@ -183,6 +183,38 @@ class Plugin {
   }
 
   /**
+   * Alias
+   *
+   * Alias creates a reference to another item on the injector
+   * within its own injector object. When the alias is injected
+   * through the use of the injector.get() method it calls the
+   * aliased dependency and creates a reference to the instance
+   * in the dependency.value field.
+   *
+   * Example:
+   * 
+   *   sunstone.plugin(<NAME>, <MANIFEST)
+   *   .factory('myDependency', function () {
+   *     // ...
+   *   })
+   *
+   *   .alias('myAlias', 'myDependency')
+   * 
+   */
+  alias (alias, name) {
+    this[injector].register({
+      name: alias,
+      type: 'alias',
+      plugin: this.name,
+      factory: () => {
+        return this[injector].get(name)
+      }
+    })
+
+    return this
+  }
+
+  /**
    * Extension
    *
    * The idea of an extension is that you can access some component
