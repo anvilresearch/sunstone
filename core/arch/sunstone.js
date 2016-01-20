@@ -39,6 +39,12 @@ class Sunstone {
 
   /**
    * Plugin
+   *
+   * Construct and return a plugin if a manifest argument is provided,
+   * otherwise, return the previously registered plugin.
+   *
+   * TODO
+   * - should "getting" a plugin throw an error if a plugin isn't found?
    */
   plugin (name, manifest) {
     if (manifest) {
@@ -98,21 +104,38 @@ class Sunstone {
 
   /**
    * Validate Plugins
+   *
+   * TODO
+   *  - how should this behave if we're doing hot swapping?
+   *    It's possible there needs to be some kind of error
+   *    handling besides throw.
    */
   validate () {
+    // iterate through the registered plugins
     Object.keys(this[plugins]).forEach((pluginName) => {
       let plugin = this[plugins][pluginName]
       let dependencies = plugin.manifest.dependencies || {}
+
+      // iterate through the plugin's dependencies
       Object.keys(dependencies).forEach((dependencyName) => {
         let dependency = this[plugins][dependencyName]
+
+        // catch missing dependency
         if (!dependency) {
           throw new Error(
-            `Plugin ${pluginName} has a missing dependency ${dependencyName}`
+            `Plugin ${pluginName} has a ` +
+            `missing dependency ${dependencyName}`
           )
         }
-        if (!semver.satisfies(dependency.manifest.version, dependencies[dependencyName])) {
+
+        // catch incompatible version
+        let version = dependency.manifest.version
+        let range = dependencies[dependencyName]
+
+        if (!semver.satisfies(version, range)) {
           throw new Error(
-            `Plugin ${pluginName} requires ${dependencyName} version ${dependencies[dependencyName]}`
+            `Plugin ${pluginName} requires ${dependencyName} ` +
+            `version ${dependencies[dependencyName]}`
           )
         }
       })

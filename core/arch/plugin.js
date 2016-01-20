@@ -40,6 +40,29 @@ class Plugin {
 
   /**
    * Require
+   *
+   * Adds dependencies to the injector by loading node modules.
+   * Accepts an array or object.
+   *
+   * By passing an object, you can load from the file system or
+   * alias the package name.
+   *
+   * Example
+   *
+   *    sunstone.plugin(<NAME>, <MANIFEST>)
+   *      .require([
+   *        'express',
+   *        'ioredis'
+   *      ])
+   *      .require({
+   *        'fs': 'fs-extra',
+   *        'myLibrary': './myLibrary'
+   *      })
+   *
+   * TODO
+   * - accept a string to require a single dependency
+   * - path based requires are currently relative to this file.
+   *   it might be better to make them relative to process.cwd()
    */
   require (modules) {
     if (Array.isArray(modules)) {
@@ -57,8 +80,44 @@ class Plugin {
 
   /**
    * Include
+   *
+   * Bootstrapping recursively loads all index.js files in the plugins directory.
+   * To make a new plugin, therefore you need to make a new directory.
+   * Additional files in the directory are ignored. However plugins may become
+   * larger than a single file can comfortable accommodate. Splitting a plugin
+   * into several files can be accomplished with this method.
+   *
+   * Example:
+   *
+   *    // index.js
+   *    'use strict'
+   *
+   *    module.exports = function (sunstone) {
+   *      sunstone.plugin('MyResource', {
+   *        version: '0.0.1',
+   *        dependencies: {
+   *          'Server': '0.0.1'
+   *        }
+   *      })
+   *      .include(__dirname, 'other')
+   *      .include(__dirname, 'yetanother')
+   *    }
+   *
+   *    // other.js
+   *    'use strict'
+   *
+   *    module.exports = function (plugin) {
+   *
+   *      plugin
+   *        .factory('MyModel', function (a, b) {
+   *          // ...
+   *        })
+   *        .router('MyModelRouter', function (MyModel) {
+   *          // ...
+   *        })
+   *
+   *    }
    */
-
   include () {
     let segments = Array.prototype.slice.call(arguments, this.include.length)
     let filepath = path.join.apply(null, segments)
@@ -117,6 +176,49 @@ class Plugin {
 
   /**
    * Extension
+   *
+   * The idea of an extension is that you can access some component
+   * to use it's API without registering anything on the injector.
+   *
+   * This is useful for things like modifying a model's schema or
+   * registering event handlers on an event emitter.
+   *
+   * Example 1:
+   *
+   *   sunstone.plugin('Default API', <MANIFEST>)
+   *     .factory('User', function (Resource) {
+   *       class User extends Resource {
+   *         static get schema () {
+   *           return Object.assign({}, super.schema, {
+   *             name: { type: 'string' },
+   *             email: { type: 'string', format: 'email' }
+   *           })
+   *         }
+   *       }
+   *
+   *       return User
+   *     })
+   *
+   *   sunstone.plugin('My Project', <MANIFEST>)
+   *     .extension('UserExtension', function (User) {
+   *       Object.assign(User.schema, {
+   *         domainSpecificAttribute: { type: 'whatever', ... }
+   *       })
+   *     })
+   *
+   * Example 2:
+   *
+   *   sunstone.plugin(<NAME>, <MANIFEST>)
+   *     .factory('emitter', function () {
+   *        return new EventEmitter()
+   *     })
+   *
+   *   sunstone.plugin('My Project', <MANIFEST>)
+   *     .extension('CustomEventHandlers', function (emitter) {
+   *        emitter.on('ready', function (event) {
+   *          // do something
+   *        })
+   *     })
    */
   extension (name, mutator) {
     this[injector].register({
@@ -131,7 +233,33 @@ class Plugin {
 
   /**
    * Router
+   *
+   * Plugins registered with this method will be mounted by the server
+   * when bootstrapping.
+   *
+   * TODO
+   * This introduces questions about the scope of the library/framework.
+   *
+   * It's necessary to be able to mount routers to a server when bootstrapping,
+   * but that makes the library server specific.
+   *
+   * If we want this to be non-server-specific, there need to be a way to
+   * extend the bootstrapping process and the plugin registration
+   *
+   * Can a plugin extend the bootstrapping process?
+   *
+   *    plugin.assembler('router', function (server) {
+   *      plugin.find({
+   *        type: 'router'
+   *      }).forEach((router) => {
+   *        server.use(router)
+   *      })
+   *    })
+   *
+   *  Maybe there's also a way to declare a "main" dependency that determines
+   *  which component kicks off the bootstrap process via injector.get()
    */
+
   router (name, factory) {
     this[injector].register({
       name,
@@ -159,6 +287,8 @@ class Plugin {
 
   /**
    * Lifecycle Management
+   *
+   * These methods are to be called by a service manager.
    */
 
   /**

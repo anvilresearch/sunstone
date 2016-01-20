@@ -107,6 +107,12 @@ class Injector {
 
   /**
    * Find
+   *
+   * TODO:
+   *  - where are we using this again?
+   *  - should there be a method to query the dependencies
+   *    without invoking the factories? or perhaps an extra argument
+   *    to `find`?
    */
   find (predicate) {
     return _.filter(this[dependencies], predicate).map((descriptor) => {
