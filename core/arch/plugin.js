@@ -42,7 +42,7 @@ class Plugin {
    * Require
    *
    * Adds dependencies to the injector by loading node modules.
-   * Accepts an array or object.
+   * Accepts a string, array or object.
    *
    * By passing an object, you can load from the file system or
    * alias the package name.
@@ -50,21 +50,31 @@ class Plugin {
    * Example
    *
    *    sunstone.plugin(<NAME>, <MANIFEST>)
+   *      .require('express')
+   *
    *      .require([
-   *        'express',
+   *        'crypto',
    *        'ioredis'
    *      ])
+   *
    *      .require({
+   *        '_': 'lodash',
    *        'fs': 'fs-extra',
    *        'myLibrary': './myLibrary'
    *      })
    *
    * TODO
-   * - accept a string to require a single dependency
    * - path based requires are currently relative to this file.
    *   it might be better to make them relative to process.cwd()
+   *   * require.resolve() can allow us to resolve the full path
+   *     of a particular file, however in order to do so, it needs
+   *     to be called from within the file itself.
    */
   require (modules) {
+    if (typeof modules === 'string') {
+      modules = { modules }
+    }
+
     if (Array.isArray(modules)) {
       modules = _.zipObject(modules, modules)
     }
