@@ -23,6 +23,7 @@
     "lodash.pluck": "^3.1.2",
     "lx-valid": "^0.5.6",
     "mkdirp": "^0.5.1",
-    "optimist": "^0.6.1"
+    "optimist": "^0.6.1",
+    "semver": "^5.1.0"
   }
 }
