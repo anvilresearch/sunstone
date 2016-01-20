@@ -150,7 +150,7 @@ class Plugin {
   }
 
   /**
-   * Alias
+   * Adapter
    *
    * Create factories that determin which implementation
    * to use at injection time.
@@ -160,7 +160,7 @@ class Plugin {
    *   sunstone.plugin(<NAME>, <MANIFEST>)
    *     .factory('a', function () {})
    *     .factory('b', function () {})
-   *     .alias('c', function (injector, settings) {
+   *     .adapter('c', function (injector, settings) {
    *        // where settings.property is 'a' or 'b'
    *        return injector.get(settings.property)
    *     })
@@ -168,15 +168,13 @@ class Plugin {
    *
    *
    * TODO:
-   *  - is "alias" the right name for this?
+   *  - is "adapter" the right name for this?
    *  - is there any way enforce that it's used this way?
-   *  - is it even necessary or desirable to have this
-   *    vs just using factory?
    */
-  alias (name, factory) {
+  adapter (name, factory) {
     this[injector].register({
       name,
-      type: 'alias',
+      type: 'adapter',
       plugin: this.name,
       factory
     })
