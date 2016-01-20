@@ -9,6 +9,8 @@ var path = require('path')
  * External Dependencies
  */
 var glob = require('glob')
+var _ = require('lodash')
+var semver = require('semver')
 
 /**
  * Local Dependencies
@@ -88,6 +90,32 @@ class Sunstone {
       type: 'router'
     }).forEach((router) => {
       router.mount()
+    })
+
+    // validate plugin dependencies
+    this.validate()
+  }
+
+  /**
+   * Validate Plugins
+   */
+  validate () {
+    Object.keys(this[plugins]).forEach((pluginName) => {
+      let plugin = this[plugins][pluginName]
+      let dependencies = plugin.manifest.dependencies || {}
+      Object.keys(dependencies).forEach((dependencyName) => {
+        let dependency = this[plugins][dependencyName]
+        if (!dependency) {
+          throw new Error(
+            `Plugin ${pluginName} has a missing dependency ${dependencyName}`
+          )
+        }
+        if (!semver.satisfies(dependency.manifest.version, dependencies[dependencyName])) {
+          throw new Error(
+            `Plugin ${pluginName} requires ${dependencyName} version ${dependencies[dependencyName]}`
+          )
+        }
+      })
     })
   }
 
