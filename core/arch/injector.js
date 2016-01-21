@@ -5,6 +5,7 @@
  */
 
 var _ = require('lodash')
+var DependencyCollection = require('./dependencyCollection')
 
 /**
  * List dependencies by stringifying and parsing the factory function.
@@ -117,7 +118,7 @@ class Injector {
    * Returns a DependencyCollection filtered by a predicate.
    */
   filter (predicate) {
-    let collection = new DependencyCollection(this[dependencies])
+    let collection = new DependencyCollection(this[dependencies], this)
     return collection.filter(predicate)
   }
 
