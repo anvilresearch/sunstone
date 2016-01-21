@@ -112,18 +112,13 @@ class Injector {
   }
 
   /**
-   * Find
+   * Filter
    *
-   * TODO:
-   *  - where are we using this again?
-   *  - should there be a method to query the dependencies
-   *    without invoking the factories? or perhaps an extra argument
-   *    to `find`?
+   * Returns a DependencyCollection filtered by a predicate.
    */
-  find (predicate) {
-    return _.filter(this[dependencies], predicate).map((descriptor) => {
-      return this.get(descriptor.name)
-    })
+  filter (predicate) {
+    let collection = new DependencyCollection(this[dependencies])
+    return collection.filter(predicate)
   }
 
 }

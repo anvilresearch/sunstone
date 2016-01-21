@@ -33,7 +33,7 @@ const injector = Symbol()
  *    injector.register(c)
  *
  *    var dc = new DependencyCollection({a,b,c}, injector)
- *    dc.find({ type: 'factory' }).values()
+ *    dc.filter({ type: 'factory' }).values()
  *
  */
 class DependencyCollection extends Array {
@@ -53,7 +53,7 @@ class DependencyCollection extends Array {
   /**
    * Find
    */
-  find (predicate) {
+  filter (predicate) {
     return new DependencyCollection(_.filter(this, predicate), this[injector])
   }
 
