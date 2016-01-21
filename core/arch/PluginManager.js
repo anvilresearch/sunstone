@@ -25,9 +25,9 @@ const plugins = Symbol()
 const injector = Symbol()
 
 /**
- * Sunstone
+ * PluginManager
  */
-class Sunstone {
+class PluginManager {
 
   /**
    * Constructor
@@ -149,13 +149,13 @@ class Sunstone {
    * Start
    */
   static run () {
-    let sunstone = new Sunstone()
-    sunstone.bootstrap()
+    let manager = new PluginManager()
+    manager.bootstrap()
 
-    let host = sunstone.settings.host
-    let port = sunstone.settings.port
+    let host = manager.settings.host
+    let port = manager.settings.port
 
-    sunstone.server.listen(port, function () {
+    manager.server.listen(port, function () {
       console.log(`Listening on ${port}`)
     })
   }
@@ -165,5 +165,5 @@ class Sunstone {
 /**
  * Exports
  */
-module.exports = Sunstone
+module.exports = PluginManager
 
