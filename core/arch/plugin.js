@@ -15,17 +15,7 @@ let injector = Symbol()
  * Plugin
  *
  * TODO
- *  By itself this is not a plugin system. It's a way of
- *  grouping dependency definitions under a namespace with
- *  metadata (the manifest).
  *
- *  To make a plugin system, we need a way to dynamically
- *  load, reload, unload, instantiate, tear down, enable,
- *  disable, etc, while the application is running.
- *
- *  This capability is where the various
- *  `injector.register` functions may begin to
- *  differentiate themselves further.
  */
 class Plugin {
 
@@ -192,14 +182,14 @@ class Plugin {
    * in the dependency.value field.
    *
    * Example:
-   * 
+   *
    *   sunstone.plugin(<NAME>, <MANIFEST)
    *   .factory('myDependency', function () {
    *     // ...
    *   })
    *
    *   .alias('myAlias', 'myDependency')
-   * 
+   *
    */
   alias (alias, name) {
     this[injector].register({
@@ -326,15 +316,92 @@ class Plugin {
   }
 
   /**
+   * Assembler
+   *
+   * This can be used to define new types of components. For example, the core
+   * framework probably doesn't need any knowledge of Express routers, but if you
+   * wanted to define a specialized factory registrar for routers, you could do it
+   * like so:
+   *
+   *    sunstone.plugin('server', {
+   *      version: '0.0.0'
+   *    })
+   *    .assembler('router', function (injector) {
+   *      let plugin = this
+   *      return function (name, factory) {
+   *        injector.register({
+   *          name,
+   *          type: 'router',
+   *          plugin: plugin.name,
+   *          factory
+   *        })
+   *      })
+   *    })
+   *
+   * This makes a new dependency registrar called 'router' that can be used thusly:
+   *
+   *    sunstone.plugin('other', {
+   *      version: '0.0.0'
+   *    })
+   *    .router('SomeRouter', function (Router, SomeResource) {
+   *      let router = new Router()
+   *
+   *      router.get('endpoint', function () {
+   *        SomeResource
+   *          .list(req.query)
+   *          .then(function (results) {
+   *            res.json(results)
+   *          })
+   *          .catch(error => next(error))
+   *      })
+   *
+   *      return router
+   *    })
+   *
+   * The dependency inject can then be queried by this new "type" value.
+   *
+   *    injector.find({ type: 'router' })
+   *
+   * TODO
+   * - there should possibly be a way to create a starter method automatically for
+   *   an assembler to save that boilerplate
+   */
+  assembler (name, factory) {
+    this[name] = factory(this[injector], this)
+    return this
+  }
+
+  /**
    * Lifecycle Management
    *
-   * These methods are to be called by a service manager.
+   * These methods are used to register lifecycle methods that will be called
+   * by the plugin manager
    */
 
   /**
    * Start
+   *
+   * Example:
+   *
+   *    sunstone.plugin(<NAME>, <MANIFEST>)
+   *      .start(function (injector, server) {
+   *        injector
+   *          .find({ plugin: this.name, type: 'router' })
+   *          .values()
+   *          .forEach(router => {
+   *            router.mount(server)
+   *          })
+   *      })
    */
-  start () {}
+  start (callback) {
+    // where do we hold these callbacks?
+    // can there be more than one per plugin?
+    // and how do we retrieve them?
+    // shouldn't be on the injector, because they're not dependencies
+    // should probably be on the plugin somehow, so that we can call it from
+    // a reference to the plugin, e.g., plugin.startCallback() (need better name)
+    return this
+  }
 
   /**
    * Stop

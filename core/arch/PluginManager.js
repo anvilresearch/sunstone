@@ -70,8 +70,29 @@ class PluginManager {
     })
   }
 
+
+  /**
+   * Lifecycle
+   *
+   * A set of methods here should match method names on the Plugin class.
+   * Each method should take a predicate, query the plugins (PluginColection?)
+   * and invoke the function with the same name on each plugin matching the
+   * predicate
+   */
+
+  add () {} // alias .plugin(name, manifest)
+  start (predicate) {}
+  stop (predicate) {}
+  remove (predicate) {}
+
+
   /**
    * Bootstrap
+   *
+   * TODO
+   * This should be responsible to load the plugins from various directories using
+   * require, validate the plugins, initialize the "main" dependency, query the plugins
+   * and call "starter" methods on each.
    */
   bootstrap () {
     let cwd = process.cwd()
@@ -92,6 +113,9 @@ class PluginManager {
     this.settings = this[injector].get('settings')
 
     // register routes
+    // TODO
+    // - this belongs in a "starter" method defined by a plugin
+    //
     this[injector]
       .filter({
         type: 'router'
