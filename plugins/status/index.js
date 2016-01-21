@@ -8,17 +8,20 @@ module.exports = function (sunstone) {
       'Server': '>=0.0.1'
     }
   })
+  .initialize(function (plugin) {
+    plugin
 
-  /**
-   * Status
-   */
-  .router('status', function (Router) {
-    let router = Router()
+    /**
+     * Status
+     */
+    .router('status', function (Router) {
+      let router = Router()
 
-    router.get('/', function (req, res, next) {
-      res.json({ status: 'OK' })
+      router.get('/', function (req, res, next) {
+        res.json({ status: 'OK' })
+      })
+
+      return router
     })
-
-    return router
-  })
+  })  
 }

@@ -8,24 +8,26 @@ module.exports = function (sunstone) {
   sunstone.plugin('Data', {
     version: '0.0.1'
   })
+  .initialize(function (plugin) {
+    plugin
+    .require([
+      'optimist',
+      'mkdirp',
+      'fs',
+      'path',
+      'crypto'
+    ])
 
-  .require([
-    'optimist',
-    'mkdirp',
-    'fs',
-    'path',
-    'crypto'
-  ])
+    .factory('argv', (optimist) => {
+      return optimist.argv
+    })
 
-  .factory('argv', (optimist) => {
-    return optimist.argv
-  })
-
-  .require({
-    'Defaults': '../../core/data/Defaults',
-    'Initializer': '../../core/data/Initializer',
-    'Model': '../../core/data/Model',
-    'Resource': '../../core/data/Resource'
+    .require({
+      'Defaults': '../../core/data/Defaults',
+      'Initializer': '../../core/data/Initializer',
+      'Model': '../../core/data/Model',
+      'Resource': '../../core/data/Resource'
+    })
   })
 
 }

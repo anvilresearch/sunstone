@@ -14,91 +14,94 @@ module.exports = function (sunstone) {
     //providedInterfaces: {}
     //requiredInterfaces: {}
   })
-
-  /**
-   * Includes
-   */
-  .include(__dirname, './redis')
-  .include(__dirname, './router')
-  .include(__dirname, './session')
-  .include(__dirname, './settings')
-
-  /**
-   * Module dependencies
-   */
-  .require({
-    'bodyParser': 'body-parser',
-    'connectFlash': 'connect-flash',
-    'consolidate': 'consolidate',
-    'cookieParser': 'cookie-parser',
-    'cors': 'cors',
-    'express': 'express',
-  })
-
-  /**
-   * settings
-   */
-  .factory('settings', function (Settings, path) {
-    return Settings.read(path.join(process.cwd(), 'settings.json'))
-  })
-
-  /**
-   * server
-   */
-  .factory('server', function (
-    bodyParser,
-    connectFlash,
-    consolidate,
-    cookieParser,
-    cors,
-    express,
-    session,
-    settings
-  ) {
+  .initialize(function (plugin) {
+    plugin
+    
+    /**
+     * Includes
+     */
+    .include(__dirname, './redis')
+    .include(__dirname, './router')
+    .include(__dirname, './session')
+    .include(__dirname, './settings')
 
     /**
-     * Server
+     * Module dependencies
      */
-    let server = express()
+    .require({
+      'bodyParser': 'body-parser',
+      'connectFlash': 'connect-flash',
+      'consolidate': 'consolidate',
+      'cookieParser': 'cookie-parser',
+      'cors': 'cors',
+      'express': 'express',
+    })
 
     /**
-     * Disable default header
+     * settings
      */
-    server.disable('x-powered-by')
+    .factory('settings', function (Settings, path) {
+      return Settings.read(path.join(process.cwd(), 'settings.json'))
+    })
 
     /**
-     * Views configuration
-     * TODO
+     * server
      */
+    .factory('server', function (
+      bodyParser,
+      connectFlash,
+      consolidate,
+      cookieParser,
+      cors,
+      express,
+      session,
+      settings
+    ) {
 
-    /**
-     * Request parsing
-     */
-    server.use(cookieParser(settings.cookie_secret))
-    server.use(bodyParser.urlencoded({ extended: false }))
-    server.use(bodyParser.json())
+      /**
+       * Server
+       */
+      let server = express()
 
-    /**
-     * Express Session
-     */
-    server.use(session)
+      /**
+       * Disable default header
+       */
+      server.disable('x-powered-by')
 
-    /**
-     * Flash messaging
-     */
+      /**
+       * Views configuration
+       * TODO
+       */
 
-    server.use(connectFlash())
+      /**
+       * Request parsing
+       */
+      server.use(cookieParser(settings.cookie_secret))
+      server.use(bodyParser.urlencoded({ extended: false }))
+      server.use(bodyParser.json())
 
-    /**
-     * Cross-Origin Support
-     */
+      /**
+       * Express Session
+       */
+      server.use(session)
 
-    server.use(cors())
+      /**
+       * Flash messaging
+       */
 
-    /**
-     * Ready
-     */
-    return server
+      server.use(connectFlash())
+
+      /**
+       * Cross-Origin Support
+       */
+
+      server.use(cors())
+
+      /**
+       * Ready
+       */
+      return server
+    })
   })
 }
 
