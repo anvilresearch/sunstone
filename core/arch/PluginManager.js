@@ -16,6 +16,7 @@ var semver = require('semver')
  * Local Dependencies
  */
 var Plugin = require('./Plugin')
+var PluginContainerCollection = require('./PluginContainerCollection')
 var Injector = require('./Injector')
 
 /**
@@ -23,6 +24,7 @@ var Injector = require('./Injector')
  */
 const plugins = Symbol()
 const injector = Symbol()
+const containedPlugins = Symbol()
 
 /**
  * PluginManager
@@ -35,6 +37,7 @@ class PluginManager {
   constructor () {
     this[injector] = new Injector()
     this[plugins] = {}
+    this[containedPlugins] = new PluginContainerCollection()
   }
 
   /**
@@ -48,14 +51,14 @@ class PluginManager {
    */
   plugin (name, manifest) {
     if (manifest) {
-      let plugin = new Plugin(name, manifest, this[injector])
-      this[plugins][name] = plugin
-      return plugin
+      let pluginContainer = new PluginContainer(name, manifest, this[injector])
+      this[pluginContainers].register(pluginContainer)
+      return pluginContainer
     } else {
       return this[plugins][name]
     }
   }
-
+  
   /**
    * Require
    */
