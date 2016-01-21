@@ -4,8 +4,8 @@
  * Local dependencies
  */
 
-var Collection = require('./collection')
-var Initializer = require('./initializer')
+var Collection = require('./Collection')
+var Initializer = require('./Initializer')
 var Validator = require('./validator')
 
 /**

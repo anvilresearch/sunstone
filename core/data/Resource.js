@@ -11,7 +11,7 @@ var inflection = require('inflection')
  */
 
 var redis = require('../boot/redis')
-var Model = require('./model')
+var Model = require('./Model')
 
 /**
  * Resource

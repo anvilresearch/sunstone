@@ -22,10 +22,10 @@ module.exports = function (sunstone) {
   })
 
   .require({
-    'Defaults': '../../core/data/defaults',
-    'Initializer': '../../core/data/initializer',
-    'Model': '../../core/data/model',
-    'Resource': '../../core/data/resource'
+    'Defaults': '../../core/data/Defaults',
+    'Initializer': '../../core/data/Initializer',
+    'Model': '../../core/data/Model',
+    'Resource': '../../core/data/Resource'
   })
 
 }

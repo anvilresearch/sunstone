@@ -5,7 +5,7 @@
  */
 
 var _ = require('lodash')
-var DependencyCollection = require('./dependencyCollection')
+var DependencyCollection = require('./DependencyCollection')
 
 /**
  * List dependencies by stringifying and parsing the factory function.

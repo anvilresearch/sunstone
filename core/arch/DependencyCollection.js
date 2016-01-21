@@ -21,7 +21,7 @@ const injector = Symbol()
  *    'use strict'
  *
  *    var Injector = require('./injector')
- *    var DependencyCollection = require('./dependencyCollection')
+ *    var DependencyCollection = require('./DependencyCollection')
  *
  *    var injector = new Injector()
  *    var a = { name: 'a', type: 'factory', factory: () => 'a' }

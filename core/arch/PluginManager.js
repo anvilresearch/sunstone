@@ -15,8 +15,8 @@ var semver = require('semver')
 /**
  * Local Dependencies
  */
-var Plugin = require('./plugin')
-var Injector = require('./injector')
+var Plugin = require('./Plugin')
+var Injector = require('./Injector')
 
 /**
  * Symbols
