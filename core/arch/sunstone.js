@@ -92,11 +92,14 @@ class Sunstone {
     this.settings = this[injector].get('settings')
 
     // register routes
-    this[injector].find({
-      type: 'router'
-    }).forEach((router) => {
-      router.mount()
-    })
+    this[injector]
+      .filter({
+        type: 'router'
+      })
+      .values()
+      .forEach((router) => {
+        router.mount()
+      })
 
     // validate plugin dependencies
     this.validate()
@@ -145,7 +148,7 @@ class Sunstone {
   /**
    * Start
    */
-  static start () {
+  static run () {
     let sunstone = new Sunstone()
     sunstone.bootstrap()
 
