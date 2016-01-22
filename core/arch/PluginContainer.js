@@ -15,7 +15,9 @@ class PluginContainer {
   }
 
   load () {
-    if (!this.factory) throw
+    if (!this.factory) throw new Error(`Plugin ${this.name} does not have an initializer callback`)
     return this.factory(new Plugin(this.name, this.manifest))
   }
 }
+
+module.exports = PluginContainer
