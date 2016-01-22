@@ -39,11 +39,13 @@ class PluginContainerCollection {
         // Check that dependency and version are satisfied
         let dependency = plugins[dependencyName]
         if (!dependency) {
-          throw new Error (/* Plugin missing */)
+          throw new Error (`Dependency ${dependencyName} missing`)
         }
         let dependencyVersion = plugins[dependencyName].manifest.version
         if (!semver.satisfies(dependencyVersion, version)) {
-          throw new Error(/* Version mismatch */)
+          throw new Error (
+            `${dependencyName} {$dependencyVersion} does not satisfy ${version}`
+          )
         }
 
         // Create links
