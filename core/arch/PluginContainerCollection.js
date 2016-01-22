@@ -32,10 +32,10 @@ class PluginContainerCollection {
    */
   resolve () {
     let plugins = this.plugins
-    _.(plugins).forEach(plugin => {
+    _(plugins).forEach(plugin => {
       let manifest = plugin.manifest
       let dependencies = manifest.dependencies || {}
-      _.forEach(dependencies, (dependencyName, version) => {
+      _(dependencies).forEach((version, dependencyName) => {
         // Check that dependency and version are satisfied
         let dependency = plugins[dependencyName]
         if (!dependency) {
