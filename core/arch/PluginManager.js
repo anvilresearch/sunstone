@@ -112,6 +112,14 @@ class PluginManager {
       this.require(cwd, 'plugins')
     }
 
+    this[containedPlugins].resolve()
+    this[containedPlugins].prioritize()
+
+    this[containedPlugins].prioritized.forEach(dependencyName => {
+      let containedPlugin = this[containedPlugins].plugins[dependencyName]
+      this[plugins][dependencyName] = containedPlugin.load()
+    })
+
     // assemble the server and create a reference
     this.server = this[injector].get('server')
     this.settings = this[injector].get('settings')

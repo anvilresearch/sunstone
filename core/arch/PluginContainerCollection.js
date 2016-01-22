@@ -55,61 +55,68 @@ class PluginContainerCollection {
         pluginDependencies[dependencyName] = dependency
       })
     })
-
-    this.prioritized = prioritize()
   }
 
   /**
    * Prioritize
    *
-   * Creates an ordered array of plugin names.
+   * Creates an ordered array of plugin names and stores it on the instance
    * Plugins are ordeded according to their initialization order.
    */
-  prioritize (remaining) {
+   prioritize() {
+    let remaining = _.values(this.plugins)
     let prioritized = []
-    remaining = remaining || _.values(this.plugins)
+    let count = 0
 
-    // Get plugins with no dependencies
-    if (prioritized.length === 0) {
-      _(remaining)
-      .filter({ dependencies: {} })
-      .forEach(plugin => {
-        // remove from remaining
-        let index = remaining.indexOf(plugin) 
-        remaining.splice(index, 1)
-        // push name to prioritized
-        prioritized.push(plugin.name)
-      })
-    }
+    // filter plugin list retrieving only plugins with no dependencies
+    remaining.filter(plugin => {
+      return !plugin.dependencies || Object.keys(plugin.dependencies).length === 0
+    })
+    // iterate through filtered list
+    .forEach(plugin => {
+      // remove from remaining
+      let index = remaining.indexOf(plugin) 
+      remaining.splice(index, 1)
+      // push name to prioritized
+      prioritized.push(plugin.name)
+    })
 
-    if (remaining && remaining.length > 0) {
-      _(remaining)
-      .filter(plugin => {
-        return _(plugin.dependencies).every(dependency => {
+    // Recursively prioritize remaining plugins
+    function prioritize (prioritized, remaining) {
+      let results = [].concat(prioritized)
+      remaining = [].concat(remaining)
+      
+      // filter plugin list retrieving only plugins where the dependencies are satisfied
+      _.filter(remaining, plugin => {
+        return _.every(plugin.dependencies, dependency => {
           return prioritized.indexOf(dependency.name) !== -1
         })
       })
+      // iterate through filtered plugin list
       .forEach(plugin => {
         // remove from remaining
         let index = remaining.indexOf(plugin) 
         remaining.splice(index, 1)
         // push name to prioritized
-        prioritized.push(plugin.name)
+        results.push(plugin.name)
       })
 
-      if (remaining.length > 0) {
-        let descendents = this.prioritize(remaining)
-        if (descendents.length === 0) {
-          throw new Error('Invalid dependency resolution')
-        }
-        prioritized = prioritized.concat(descendents)
+      if (remaining.length === 0) {
+        return results
+      } else {
+        // concatenate results of recursion to current state and return
+        return prioritize(results, remaining)
       }
     }
-    else {
-      return prioritized
-    }
+
+    this.prioritized = prioritize(prioritized, remaining)
   }
 
+  /**
+   * Register
+   *
+   * Stores a contained plugin on the current instance of the collection
+   */
   register (plugin) {
     this.plugins[plugin.name] = plugin
   }
