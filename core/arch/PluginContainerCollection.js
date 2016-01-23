@@ -1,21 +1,13 @@
 'use strict'
 
 /**
- * Native Dependencies
- */
-
-/**
  * External Dependencies
  */
 var _ = require('lodash')
 var semver = require('semver')
 
 /**
- * Local Dependencies
- */
-
-/**
- * PluginContainerTree
+ * PluginContainerCollection
  */
 class PluginContainerCollection {
 
@@ -32,10 +24,11 @@ class PluginContainerCollection {
    */
   resolve () {
     let plugins = this.plugins
-    _(plugins).forEach(plugin => {
+    // Iterate through plugins to check dependencies
+    _.forEach(plugins, plugin => {
       let manifest = plugin.manifest
       let dependencies = manifest.dependencies || {}
-      _(dependencies).forEach((version, dependencyName) => {
+      _.forEach(dependencies, (version, dependencyName) => {
         // Check that dependency and version are satisfied
         let dependency = plugins[dependencyName]
         if (!dependency) {
@@ -63,7 +56,7 @@ class PluginContainerCollection {
    * Creates an ordered array of plugin names and stores it on the instance
    * Plugins are ordeded according to their initialization order.
    */
-   prioritize() {
+  prioritize() {
     let remaining = _.values(this.plugins)
     let prioritized = []
     let count = 0
@@ -123,7 +116,7 @@ class PluginContainerCollection {
 
 }
 
- /**
+/**
  * Exports
  */
 module.exports = PluginContainerCollection
