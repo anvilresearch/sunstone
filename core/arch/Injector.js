@@ -113,6 +113,31 @@ class Injector {
   }
 
   /**
+   * Invoke
+   *
+   * Lifecycle callbacks which use dependencies on the injector, but return no values
+   * can be registered on the injector for event handling. This method invokes such
+   * callbacks by name, providing any required dependencies as arguments. It fails
+   * silently if no callback is found.
+   */
+  invoke (name) {
+    let descriptor = this[dependencies][name]
+
+    if (descriptor) {
+      let values = []
+      let callback = descriptor.callback
+
+      descriptor.dependencies(item => {
+        if (item) {
+          values.push(this.get(item))
+        }
+      })
+
+      descriptor.callback.apply(null, values)
+    }
+  }
+
+  /**
    * Filter
    *
    * Returns a DependencyCollection filtered by a predicate.
