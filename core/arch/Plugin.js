@@ -148,13 +148,13 @@ class Plugin {
    * Example:
    *
    *   sunstone.plugin(<NAME>, <MANIFEST>)
-   *     .factory('a', function () {})
-   *     .factory('b', function () {})
-   *     .adapter('c', function (injector, settings) {
-   *        // where settings.property is 'a' or 'b'
+   *     .factory('RedisResource', function () {})
+   *     .factory('MongoResource', function () {})
+   *     .adapter('Resource', function (injector, settings) {
+   *        // where settings.property is 'RedisResource' or 'MongoResource'
    *        return injector.get(settings.property)
    *     })
-   *     .factory('d', function (c) {})
+   *     .factory('User', function (Resource) {})
    *
    *
    * TODO:
@@ -231,7 +231,7 @@ class Plugin {
    *
    *   sunstone.plugin('My Project', <MANIFEST>)
    *     .extension('UserExtension', function (User) {
-   *       Object.assign(User.schema, {
+   *       User.extendSchema({
    *         domainSpecificAttribute: { type: 'whatever', ... }
    *       })
    *     })
