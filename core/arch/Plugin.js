@@ -70,7 +70,7 @@ class Plugin {
     }
 
     Object.keys(modules).forEach((key) => {
-      this.factory(key, function () {
+      this.module(key, function () {
         return require(modules[key])
       })
     })
@@ -123,6 +123,18 @@ class Plugin {
     let filepath = path.join.apply(null, segments)
     require(filepath)(this)
     return this
+  }
+
+  /**
+   * Module
+   */
+  module (name, factory) {
+    this[injector].register({
+      name,
+      type: 'module',
+      plugin: this.name,
+      factory
+    })
   }
 
   /**
@@ -262,60 +274,6 @@ class Plugin {
   }
 
   /**
-   * Router
-   *
-   * Plugins registered with this method will be mounted by the server
-   * when bootstrapping.
-   *
-   * TODO
-   * This introduces questions about the scope of the library/framework.
-   *
-   * It's necessary to be able to mount routers to a server when bootstrapping,
-   * but that makes the library server specific.
-   *
-   * If we want this to be non-server-specific, there need to be a way to
-   * extend the bootstrapping process and the plugin registration
-   *
-   * Can a plugin extend the bootstrapping process?
-   *
-   *    plugin.assembler('router', function (server) {
-   *      plugin.find({
-   *        type: 'router'
-   *      }).forEach((router) => {
-   *        server.use(router)
-   *      })
-   *    })
-   *
-   *  Maybe there's also a way to declare a "main" dependency that determines
-   *  which component kicks off the bootstrap process via injector.get()
-   */
-
-  router (name, factory) {
-    this[injector].register({
-      name,
-      type: 'router',
-      plugin: this.name,
-      factory
-    })
-
-    return this
-  }
-
-  /**
-   * Connector
-   */
-  connector (name, factory) {
-    this[injector].register({
-      name,
-      type: 'connector',
-      plugin: this.name,
-      factory
-    })
-
-    return this
-  }
-
-  /**
    * Assembler
    *
    * This can be used to define new types of components. For example, the core
@@ -379,12 +337,34 @@ class Plugin {
    */
 
   /**
-   * Start
+   * Initializer
+   */
+  initializer (callback) {
+    this[injector].register({
+      name: `${this.name}:initializer`,
+      type: 'callback',
+      plugin: this.name,
+      callback: callback
+    })
+
+    return this
+  }
+
+  /**
+   * Initialize
+   */
+  initialize () {
+    this[injector].invoke(`${this.name}:initializer`)
+    return this
+  }
+
+  /**
+   * Starter
    *
    * Example:
    *
-   *    sunstone.plugin(<NAME>, <MANIFEST>)
-   *      .start(function (injector, server) {
+   *    sunstone.plugin(<NAME>, <METADATA>)
+   *      .starter(function (injector, server) {
    *        injector
    *          .find({ plugin: this.name, type: 'router' })
    *          .values()
@@ -393,20 +373,46 @@ class Plugin {
    *          })
    *      })
    */
-  start (callback) {
-    // where do we hold these callbacks?
-    // can there be more than one per plugin?
-    // and how do we retrieve them?
-    // shouldn't be on the injector, because they're not dependencies
-    // should probably be on the plugin somehow, so that we can call it from
-    // a reference to the plugin, e.g., plugin.startCallback() (need better name)
+  starter (callback) {
+    this[injector].register({
+      name: `${this.name}:starter`,
+      type: 'callback',
+      plugin: this.name,
+      callback: callback
+    })
+
+    return this
+  }
+
+  /**
+   * Start
+   */
+  start () {
+    this[injector].invoke(`${this.name}:starter`)
+    return this
+  }
+
+  /**
+   * Stopper
+   */
+  stopper (callback) {
+    this[injector].register({
+      name: `${this.name}:stopper`,
+      type: 'callback',
+      plugin: this.name,
+      callback: callback
+    })
+
     return this
   }
 
   /**
    * Stop
    */
-  stop () {}
+  stop () {
+    this[injector].invoke(`${this.name}:stopper`)
+    return this
+  }
 
 }
 
