@@ -3,23 +3,9 @@
 /**
  * Dependencies
  */
-
-var _ = require('lodash')
-var DependencyCollection = require('./DependencyCollection')
-
-/**
- * List dependencies by stringifying and parsing the factory function.
- * Borrowed from AngularJS. Does the licensing allow this?
- */
-
-/**
- * Constants
- */
-const ARROW_ARG = /^([^\(]+?)=>/
-const FN_ARGS = /^[^\(]*\(\s*([^\)]*)\)/m
-const FN_ARG_SPLIT = /,/
-const FN_ARG = /^\s*(_?)(\S+?)\1\s*$/
-const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
+const _ = require('lodash')
+const DependencyCollection = require('./DependencyCollection')
+const Dependency = require('./Dependency') 
 
 /**
  * Symbols
@@ -45,36 +31,17 @@ class Injector {
   }
 
   /**
-   * Extract Dependencies
-   * Adapted from AngularJS.
-   */
-
-  extractDependencies (fn) {
-    let str = fn.toString().replace(STRIP_COMMENTS, '')
-    let match = str.match(ARROW_ARG) || str.match(FN_ARGS)
-    let args = match[1].split(FN_ARG_SPLIT)
-    return args.map(str => str.trim())
-  }
-
-  /**
    * Register
    */
   register (descriptor) {
-    let name = descriptor.name
-    let factory = descriptor.factory
-    let mutator = descriptor.mutator
-    let value = descriptor.value
-
-    if (!factory && !value && !mutator) {
-      throw new Error('Plugin component must include factory, mutator, or value')
+    let dependency = new Dependency(descriptor)
+    let validation = dependency.validate()
+    if (validation.valid) {
+      this[dependencies][dependency.name] = dependency
     }
-
-    if (factory && !descriptor.dependencies) {
-      descriptor.dependencies = this.extractDependencies(factory)
+    else {
+      console.log('Dependency Validation Error', validation)
     }
-    //  enabled
-    //  scope/permissions
-    this[dependencies][name] = descriptor
   }
 
   /**
