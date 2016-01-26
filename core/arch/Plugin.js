@@ -10,6 +10,7 @@ var path = require('path')
  * Symbols
  */
 let injector = Symbol()
+let init = Symbol()
 
 /**
  * Plugin
@@ -22,9 +23,9 @@ class Plugin {
   /**
    * Constructor
    */
-  constructor (name, manifest, _injector) {
+  constructor (name, metadata, _injector) {
     this.name = name
-    this.manifest = manifest
+    this.metadata = metadata
     this[injector] = _injector
   }
 
@@ -39,7 +40,7 @@ class Plugin {
    *
    * Example
    *
-   *    sunstone.plugin(<NAME>, <MANIFEST>)
+   *    sunstone.plugin(<NAME>, <METADATA>)
    *      .require('express')
    *
    *      .require([
@@ -159,7 +160,7 @@ class Plugin {
    *
    * Example:
    *
-   *   sunstone.plugin(<NAME>, <MANIFEST>)
+   *   sunstone.plugin(<NAME>, <METADATA>)
    *     .factory('RedisResource', function () {})
    *     .factory('MongoResource', function () {})
    *     .adapter('Resource', function (injector, settings) {
@@ -195,7 +196,7 @@ class Plugin {
    *
    * Example:
    *
-   *   sunstone.plugin(<NAME>, <MANIFEST)
+   *   sunstone.plugin(<NAME>, <METADATA)
    *   .factory('myDependency', function () {
    *     // ...
    *   })
@@ -227,7 +228,7 @@ class Plugin {
    *
    * Example 1:
    *
-   *   sunstone.plugin('Default API', <MANIFEST>)
+   *   sunstone.plugin('Default API', <METADATA>)
    *     .factory('User', function (Resource) {
    *       class User extends Resource {
    *         static get schema () {
@@ -241,7 +242,7 @@ class Plugin {
    *       return User
    *     })
    *
-   *   sunstone.plugin('My Project', <MANIFEST>)
+   *   sunstone.plugin('My Project', <METADATA>)
    *     .extension('UserExtension', function (User) {
    *       User.extendSchema({
    *         domainSpecificAttribute: { type: 'whatever', ... }
@@ -250,12 +251,12 @@ class Plugin {
    *
    * Example 2:
    *
-   *   sunstone.plugin(<NAME>, <MANIFEST>)
+   *   sunstone.plugin(<NAME>, <METADATA>)
    *     .factory('emitter', function () {
    *        return new EventEmitter()
    *     })
    *
-   *   sunstone.plugin('My Project', <MANIFEST>)
+   *   sunstone.plugin('My Project', <METADATA>)
    *     .extension('CustomEventHandlers', function (emitter) {
    *        emitter.on('ready', function (event) {
    *          // do something
@@ -338,15 +339,13 @@ class Plugin {
 
   /**
    * Initializer
+   *
+   * Example:
+   *
+   *    sunstone.
    */
   initializer (callback) {
-    this[injector].register({
-      name: `${this.name}:initializer`,
-      type: 'callback',
-      plugin: this.name,
-      callback: callback
-    })
-
+    this[init] = callback
     return this
   }
 
@@ -354,7 +353,12 @@ class Plugin {
    * Initialize
    */
   initialize () {
-    this[injector].invoke(`${this.name}:initializer`)
+    let fn = this[init]
+
+    if (fn) {
+      fn(this)
+    }
+
     return this
   }
 
@@ -364,13 +368,15 @@ class Plugin {
    * Example:
    *
    *    sunstone.plugin(<NAME>, <METADATA>)
-   *      .starter(function (injector, server) {
-   *        injector
-   *          .find({ plugin: this.name, type: 'router' })
-   *          .values()
-   *          .forEach(router => {
-   *            router.mount(server)
-   *          })
+   *      .initializer(function (plugin) {
+   *        plugin.starter(function (injector, server) {
+   *          injector
+   *            .find({ plugin: this.name, type: 'router' })
+   *            .values()
+   *            .forEach(router => {
+   *              router.mount(server)
+   *            })
+   *        })
    *      })
    */
   starter (callback) {
