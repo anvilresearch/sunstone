@@ -1,8 +1,19 @@
 'use strict'
 
 /**
+ * Dependencies
+ */
+const _ = require('lodash')
+const path = require('path')
+const glob = require('glob')
+const semver = require('semver')
+const Plugin = require('./Plugin')
+const PluginCollection = require('./PluginCollection')
+
+/**
  * Symbols
  */
+const injector = Symbol()
 const plugins = Symbol()
 
 /**
@@ -19,31 +30,33 @@ class Registry {
   /**
    * constructor
    */
-  constructor (options, injector) {
+  constructor (options, _injector) {
     this.options = options
-    this.injector = injector
-    this[plugins] = new Map()
+    this[injector] = _injector
+    this[plugins] = {}
     this.prioritized = new PluginCollection()
-    this.source = path.join(process.cwd(), 'plugins')
+    this.directories = [
+      path.join(process.cwd(), 'plugins')
+    ]
   }
 
   /**
    * get
    */
   get (name) {
-    return this[plugins].get(name)
+    return this[plugins][name]
   }
 
   /**
    * set
    */
   set (name, plugin) {
-    if (!(plugin instanceof Plugin) {
+    if (!(plugin instanceof Plugin)) {
       let json = JSON.stringify(plugin)
       throw new Error(`${json} is not a Plugin instance.`)
     }
 
-    this[plugins].set(name, plugin)
+    this[plugins][name] = plugin
     return plugin
   }
 
@@ -51,35 +64,40 @@ class Registry {
    * del
    */
   del (name) {
-    return this[plugins].delete(key)
+    return delete this[plugins][name]
   }
 
   /**
    * filter
    */
   filter (predicate) {
-    return this.priority.filter(predicate)
+    console.log('UGH', this.prioritized.filter)
+    return this.prioritized.filter(predicate)
   }
 
   /**
    * glob
    */
   glob () {
-    return this.directories.reduce((results, directory) => {
+    this.files = this.directories.reduce((results, directory) => {
       let pattern = path.join(directory, '**/index.js')
-      let plugins = glob.sync(path.resolve(pattern))
-      return results.push(...plugins)
+      let files = glob.sync(path.resolve(pattern))
+      files.forEach(filename => results.push(filename))
+      return results
     }, [])
+
+    return this
   }
 
   /**
    * require
    */
   require () {
-    let plugins = glob.apply(null, arguments)
-    plugins.forEach(plugin => {
-      require(plugin)(this)
+    this.files.forEach(filename => {
+      require(filename)(this)
     })
+
+    return this
   }
 
   /**
@@ -89,16 +107,16 @@ class Registry {
    * all plugins.
    */
   resolve () {
-    let plugins = this.plugins
-
-    plugins.forEach(plugin => {
+    Object.keys(this[plugins]).forEach(key => {
+      let plugin = this[plugins][key]
       let metadata = plugin.metadata
-      let dependencies = new Map(metadata.dependencies || {})
+      let dependencies = metadata.dependencies || {}
 
-      dependencies.forEach(range, name => {
+      Object.keys(dependencies).forEach(name => {
+        let range = dependencies[name]
 
         // validate presence
-        let dependency = plugins[name]
+        let dependency = this[plugins][name]
         if (!dependency) {
           throw new Error(`Dependency ${name} missing.`)
         }
@@ -118,6 +136,8 @@ class Registry {
         plugin.dependencies[name] = dependency
       })
     })
+
+    return this
   }
 
   /**
@@ -133,7 +153,7 @@ class Registry {
 
     // move satisfied dependencies from remaining to prioritized
     source.forEach((plugin, index) => {
-      let dependencies = Object.values(plugin.dependencies)
+      let dependencies = _.values(plugin.dependencies)
 
       // check if the plugin's dependencies are satisfied
       let isSatisfied = dependencies.every(dependency => {
@@ -157,7 +177,7 @@ class Registry {
    */
   prioritize () {
     let ordered = []
-    let remaining = [].concat(this[plugins])
+    let remaining = [].concat(_.values(this[plugins]))
 
     // separate the plugins that have no dependencies
     remaining.forEach((plugin, index) => {
@@ -171,7 +191,9 @@ class Registry {
     })
 
     // recurse through the remaining dependencies
-    this.prioritized = this.satisfy(ordered, remaining)
+    this.prioritized = new PluginCollection(this.satisfy(ordered, remaining))
+
+    return this
   }
 
   /**
@@ -180,7 +202,9 @@ class Registry {
    * Iterate over prioritized plugins and invoke initializer methods.
    */
   initialize () {
-    this.prioritized.forEach(plugin => plugin.initialize())
+    this.prioritized.forEach(plugin => {
+      plugin.initialize()
+    })
   }
 
   /**
@@ -188,7 +212,7 @@ class Registry {
    */
   plugin (name, metadata) {
     if (metadata) {
-      return this.set(name, new Plugin(name, metadata, this.injector))
+      return this.set(name, new Plugin(name, metadata, this[injector]))
     } else {
       return this.get(name)
     }
