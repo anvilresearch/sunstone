@@ -71,7 +71,6 @@ class Registry {
    * filter
    */
   filter (predicate) {
-    console.log('UGH', this.prioritized.filter)
     return this.prioritized.filter(predicate)
   }
 
