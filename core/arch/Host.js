@@ -29,7 +29,7 @@ class Host {
    */
   constructor (options) {
     let injector = new Injector()
-    let registry = new Registry(options)
+    let registry = new Registry(options, injector)
 
     this.options = options
     this.injector = injector
@@ -40,7 +40,7 @@ class Host {
    * Bootstrap
    */
   static bootstrap (options) {
-    let host = Host(options)
+    let host = new Host(options)
 
     host.registry
       .glob()
@@ -58,7 +58,9 @@ class Host {
   run () {
     this.injector.get('main')
     this.registry
-      .filter({ enabled: true })
+      // TODO
+      //.filter({ enabled: true })
+      .filter()
       .start()
   }
 
