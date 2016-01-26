@@ -14,15 +14,17 @@ module.exports = function (sunstone) {
     //providedInterfaces: {}
     //requiredInterfaces: {}
   })
-  .initialize(function (plugin) {
-    plugin
-    
+  .initializer(function (plugin) {
+    plugin.alias('main', 'server')
+    // this could be plugin.main('server') instead??
+
     /**
      * Includes
      */
     .include(__dirname, './redis')
     .include(__dirname, './router')
     .include(__dirname, './session')
+    .include(__dirname, './server')
     .include(__dirname, './settings')
 
     /**
@@ -37,71 +39,13 @@ module.exports = function (sunstone) {
       'express': 'express',
     })
 
-    /**
-     * settings
-     */
-    .factory('settings', function (Settings, path) {
-      return Settings.read(path.join(process.cwd(), 'settings.json'))
+    .starter(function (server, settings) {
+      let port = settings.port
+      server.listen(port, function () {
+        console.log(`Listening on ${port}`)
+      })
     })
 
-    /**
-     * server
-     */
-    .factory('server', function (
-      bodyParser,
-      connectFlash,
-      consolidate,
-      cookieParser,
-      cors,
-      express,
-      session,
-      settings
-    ) {
-
-      /**
-       * Server
-       */
-      let server = express()
-
-      /**
-       * Disable default header
-       */
-      server.disable('x-powered-by')
-
-      /**
-       * Views configuration
-       * TODO
-       */
-
-      /**
-       * Request parsing
-       */
-      server.use(cookieParser(settings.cookie_secret))
-      server.use(bodyParser.urlencoded({ extended: false }))
-      server.use(bodyParser.json())
-
-      /**
-       * Express Session
-       */
-      server.use(session)
-
-      /**
-       * Flash messaging
-       */
-
-      server.use(connectFlash())
-
-      /**
-       * Cross-Origin Support
-       */
-
-      server.use(cors())
-
-      /**
-       * Ready
-       */
-      return server
-    })
   })
 }
 
