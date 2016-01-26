@@ -5,7 +5,13 @@ module.exports = function (plugin) {
   /**
    * Settings
    */
-  plugin.factory('Settings', function (
+  plugin
+
+  .factory('settings', function (Settings, path) {
+    return Settings.read(path.join(process.cwd(), 'settings.json'))
+  })
+
+  .factory('Settings', function (
     Model,
     Initializer,
     argv,
