@@ -1,6 +1,6 @@
 'use strict'
 
-var server = require('./core/arch/PluginManager')
+var server = require('./core/arch/Host').bootstrap()
 
 if (!module.parent) {
   server.run()
