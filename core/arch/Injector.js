@@ -5,7 +5,7 @@
  */
 const _ = require('lodash')
 const DependencyCollection = require('./DependencyCollection')
-const Dependency = require('./Dependency') 
+const Dependency = require('./Dependency')
 
 /**
  * Symbols
@@ -88,19 +88,19 @@ class Injector {
    * silently if no callback is found.
    */
   invoke (name) {
-    let descriptor = this[dependencies][name]
+    let dependency = this[dependencies][name]
 
-    if (descriptor) {
+    if (dependency) {
       let values = []
-      let callback = descriptor.callback
+      let callback = dependency.callback
 
-      descriptor.dependencies(item => {
+      dependency.dependencies.forEach(item => {
         if (item) {
           values.push(this.get(item))
         }
       })
 
-      descriptor.callback.apply(null, values)
+      dependency.callback.apply(null, values)
     }
   }
 
