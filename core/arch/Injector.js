@@ -37,10 +37,10 @@ class Injector {
     let dependency = new Dependency(descriptor)
     let validation = dependency.validate()
     if (validation.valid) {
+      dependency.extractDependencies()
       this[dependencies][dependency.name] = dependency
-    }
-    else {
-      console.log('Dependency Validation Error', validation)
+    } else {
+      console.log(validation.message, validation.errors)
     }
   }
 
