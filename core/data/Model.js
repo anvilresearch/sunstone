@@ -3,21 +3,18 @@
 /**
  * Local dependencies
  */
-
-var Collection = require('./Collection')
-var Initializer = require('./Initializer')
-var Validator = require('./validator')
+const Collection = require('./Collection')
+const Initializer = require('./Initializer')
+const Validator = require('./validator')
 
 /**
  * Model
  */
-
 class Model {
 
   /**
    * Constructor
    */
-
   constructor (data, options) {
     this.initialize(data, options)
   }
@@ -25,7 +22,6 @@ class Model {
   /**
    * Initialize (static)
    */
-
   static initialize (data, options) {
     // get a reference to class this
     // method is called on
@@ -66,7 +62,6 @@ class Model {
   /**
    * Initialize (prototype)
    */
-
   initialize (data, options) {
     let schema = this.constructor.schema
     let mappings = this.constructor.mappings
@@ -83,7 +78,6 @@ class Model {
   /**
    * Validate (static)
    */
-
   static validate (data) {
     return Validator.validate(data, this.schema)
   }
@@ -91,7 +85,6 @@ class Model {
   /**
    * Validate (prototype)
    */
-
   validate () {
     let schema = this.constructor.schema
     return Validator.validate(this, schema)
@@ -109,7 +102,6 @@ class Model {
   /**
    * Serialize
    */
-
   static serialize (object) {
     return JSON.stringify(object)
   }
@@ -117,7 +109,6 @@ class Model {
   /**
    * Deserialize
    */
-
   static deserialize (data) {
     try {
       return JSON.parse(data)
@@ -131,5 +122,4 @@ class Model {
 /**
  * Export
  */
-
 module.exports = Model
