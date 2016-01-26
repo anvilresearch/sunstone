@@ -3,7 +3,7 @@
 /**
  * Dependencies
  */
-const Validation = require('./Validation')
+const Model = require('../data/Model')
 
 /**
  * List dependencies by stringifying and parsing the factory function.
@@ -20,18 +20,16 @@ const FN_ARG = /^\s*(_?)(\S+?)\1\s*$/
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
 
 
-
-class Dependency {
+/**
+ * Dependency
+ */
+class Dependency extends Model {
 
   constructor (descriptor) {
     if (descriptor) {
       Object.keys(descriptor).forEach(key => {
         this[key] = descriptor[key]
-      })
-
-      if (this.factory && !descriptor.dependencies) {
-        this.dependencies = this.extractDependencies()
-      }
+      }) 
     }
   }
 
@@ -46,46 +44,51 @@ class Dependency {
     return args.map(str => str.trim())
   }
 
-  validate () {
-    let validation = new Validation()
+  extractDependencies () {
+    if (this.factory && !descriptor.dependencies) {
+      this.dependencies = Dependency.extractDependencies(this.factory)
+    }
+  }
 
-    // assert presence
-    validation.assert(this.name, 'name required')
-    validation.assert(this.type, 'type required')
-    validation.assert(this.plugin, 'plugin required')
+  static get schema () {
+    /**
+     * factoryConform
+     */
+    const factoryErrorMessage = 'A factory, mutator, callback or value is required'
+    function factoryConform (value, instance) {
+      // check for a value on the dependency
+      if (this.value) {
+        return true
+      }
 
-    // assert type
-    validation.assert(typeof this.name === 'string', 'name must be a string')
-    validation.assert(typeof this.type === 'string', 'type must be a string')
-    validation.assert(typeof this.plugin === 'string', 'plugin must be a string')
-
-    // return if already invalid
-    if (!validation.valid) {
-      return validation
+      // if there is no value present there needs to be a factory, callback or mutator
+      // and any of those need to be a function
+      let present = this.factory || this.callback || this.mutator
+      return present 
+        ? typeof present === 'function' 
+        || this.value 
+        : false
     }
 
-    // validate known types 
-
-    switch (this.type) {
-      case 'factory':
-      case 'adapter':
-      case 'alias':
-      case 'module':
-        validation.assert(this.factory || this.value, `${this.name} requires a factory function or a value`)
-        validation.assert(typeof this.factory === 'function', 'factory must be a function')
-        break
-      case 'extension':
-      case 'callback':
-        let functionName = this.type === 'extension' ? 'extension' : 'callback'
-        validation.assert(this[attributeName], `${this.name} requires a ${attributeName} function`)
-        validation.assert(typeof this[attributeName] === 'function', '${attributeName} must be a function')
-        break
-      default:
-        // this.type is not one of the types defined by this architecture and cannot be validated further.
-        break
+    // seeing as the property would be the same for all factory types and value;
+    // create a single instance of the property for use over all four.
+    let factoryConformProperty = { 
+      type: 'any', 
+      conform: factoryConform, 
+      messages: {
+        conform: factoryErrorMessage
+      }
     }
 
-    return validation
+    return {
+      name: { type: 'string', required: true },
+      type: { type: 'string', required: true },
+      plugin: { type: 'string', required: true },
+      factory: factoryConformProperty,
+      mutator: factoryConformProperty,
+      callback: factoryConformProperty,
+      value: factoryConformProperty
+    }
   }
 
 }
