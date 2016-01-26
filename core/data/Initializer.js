@@ -53,8 +53,9 @@ class Initializer {
    */
 
   static assign (key, descriptor, source, target, options) {
+    let value = source[key]
+
     if (descriptor && !descriptor.private || options.private) {
-      var value = source[key]
 
       // define an immutable property
       if (value && descriptor.immutable) {
@@ -74,7 +75,7 @@ class Initializer {
 
       // assign default value
       } else if (descriptor.default && options.defaults !== false) {
-        var defaultValue = descriptor.default
+        let defaultValue = descriptor.default
         target[key] = (typeof defaultValue === 'function')
           ? defaultValue()
           : defaultValue
@@ -82,8 +83,8 @@ class Initializer {
 
       // trim string values if requested
       if (descriptor.trim) {
-        var trimLeading = descriptor.trim === true || descriptor.trim.leading
-        var trimTrailing = descriptor.trim === true || descriptor.trim.trailing
+        let trimLeading = descriptor.trim === true || descriptor.trim.leading
+        let trimTrailing = descriptor.trim === true || descriptor.trim.trailing
 
         if (descriptor.type === 'string' && typeof target[key] === 'string') {
           if (trimLeading) {
@@ -93,7 +94,7 @@ class Initializer {
             target[key] = target[key].replace(/\s+$/, '')
           }
         } else if (descriptor.type === 'array' && Array.isArray(target[key])) {
-          for (var i = 0; i < target[key].length; i++) {
+          for (let i = 0; i < target[key].length; i++) {
             if (typeof target[key][i] === 'string') {
               if (trimLeading) {
                 target[key][i] = target[key][i].replace(/^\s+/, '')
@@ -125,10 +126,10 @@ class Initializer {
 
   static map (mapping, source, target) {
     Object.keys(mapping).forEach(function (path) {
-      var from = mapping[path]
-      var to = path.split('.')
+      let from = mapping[path]
+      let to = path.split('.')
       if (typeof from === 'function') {
-        var value = from(source)
+        let value = from(source)
         if (value) {
           Initializer.setDeepProperty(target, to, value)
         }
@@ -148,8 +149,8 @@ class Initializer {
 
   static project (mapping, source, target) {
     Object.keys(mapping).forEach(function (path) {
-      var from = path.split('.')
-      var to = mapping[path].split('.')
+      let from = path.split('.')
+      let to = mapping[path].split('.')
       Initializer.setDeepProperty(
         target,
         to,
@@ -179,7 +180,7 @@ class Initializer {
    */
 
   static select (properties, source, target) {
-    var mapping = {}
+    let mapping = {}
 
     properties.forEach(function (property) {
       mapping[property] = property
@@ -193,7 +194,7 @@ class Initializer {
    */
 
   static getDeepProperty (source, chain) {
-    var key = chain.shift()
+    let key = chain.shift()
 
     // there's nothing to see here, move along
     if (source[key] === undefined) { return }
@@ -201,6 +202,8 @@ class Initializer {
     if (source[key] === null) { return null }
     // if property is false then return false
     if (source[key] === false) { return false }
+    // if property is '' then return false
+    if (source[key] === '') { return '' }
     // we're at the end of the line, this is the value you're looking for
     if (source[key] && chain.length === 0) { return source[key] }
     // traverse the object
@@ -214,11 +217,11 @@ class Initializer {
    */
 
   static setDeepProperty (target, chain, value) {
-    var key = chain.shift()
+    let key = chain.shift()
 
-    if (chain.length === 0) {
+    if (chain.length === 0 && value !== undefined) {
       target[key] = value
-    } else {
+    } else if (chain.length !==0) {
       if (!target[key]) { target[key] = {} }
       Initializer.setDeepProperty(target[key], chain, value)
     }
