@@ -8,7 +8,7 @@ module.exports = function (sunstone) {
   sunstone.plugin('Data', {
     version: '0.0.1'
   })
-  .initialize(function (plugin) {
+  .initializer(function (plugin) {
     plugin
     .require([
       'optimist',
