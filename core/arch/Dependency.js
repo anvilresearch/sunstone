@@ -6,11 +6,6 @@
 const Model = require('../data/Model')
 
 /**
- * List dependencies by stringifying and parsing the factory function.
- * Borrowed from AngularJS. Does the licensing allow this?
- */
-
-/**
  * Constants
  */
 const ARROW_ARG = /^([^\(]+?)=>/
@@ -19,19 +14,10 @@ const FN_ARG_SPLIT = /,/
 const FN_ARG = /^\s*(_?)(\S+?)\1\s*$/
 const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
 
-
 /**
  * Dependency
  */
 class Dependency extends Model {
-
-  constructor (descriptor) {
-    if (descriptor) {
-      Object.keys(descriptor).forEach(key => {
-        this[key] = descriptor[key]
-      }) 
-    }
-  }
 
   /**
    * Extract Dependencies
@@ -44,12 +30,18 @@ class Dependency extends Model {
     return args.map(str => str.trim())
   }
 
+  /**
+   * extractDependencies
+   */
   extractDependencies () {
     if (this.factory && !descriptor.dependencies) {
       this.dependencies = Dependency.extractDependencies(this.factory)
     }
   }
 
+  /**
+   * get schema
+   */
   static get schema () {
     /**
      * factoryConform
@@ -80,6 +72,9 @@ class Dependency extends Model {
       }
     }
 
+    /**
+     * Dependency schema
+     */
     return {
       name: { type: 'string', required: true },
       type: { type: 'string', required: true },
@@ -87,10 +82,14 @@ class Dependency extends Model {
       factory: factoryConformProperty,
       mutator: factoryConformProperty,
       callback: factoryConformProperty,
-      value: factoryConformProperty
+      value: factoryConformProperty,
+      dependencies: { type: 'array' }
     }
   }
 
 }
 
+/**
+ * Exports
+ */
 module.exports = Dependency
