@@ -4,6 +4,7 @@
  * Dependencies
  */
 const _ = require('lodash')
+const Colleciton = require('./Collection')
 const injector = require('./injector')
 
 /**
@@ -32,25 +33,7 @@ const injector = require('./injector')
  *    dc.filter({ type: 'factory' }).values()
  *
  */
-class DependencyCollection extends Array {
-
-  /**
-   * Constructor
-   */
-  constructor (collection) {
-    super()
-
-    _.values(collection).forEach(item => {
-      this.push(item)
-    })
-  }
-
-  /**
-   * Find
-   */
-  filter (predicate) {
-    return new DependencyCollection(_.filter(this, predicate), injector)
-  }
+class DependencyCollection extends Colleciton {
 
   /**
    * Values

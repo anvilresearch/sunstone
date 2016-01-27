@@ -4,29 +4,12 @@
  * Dependencies
  */
 const _ = require('lodash')
+const Collection = require('./Collection')
 
 /**
  * PluginCollection
  */
-class PluginCollection extends Array {
-
-  /**
-   * Constructor
-   */
-  constructor (collection) {
-    super()
-    
-    _.values(collection).forEach(item => {
-      this.push(item)
-    })
-  }
-
-  /**
-   * Filter
-   */
-  filter (predicate) {
-    return new PluginCollection(_.filter(this, predicate))
-  }
+class PluginCollection extends Collection {
 
   /**
    * Start
