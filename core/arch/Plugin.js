@@ -325,7 +325,7 @@ class Plugin {
    *   an assembler to save that boilerplate
    */
   assembler (name, factory) {
-    this[name] = factory(injector, this)
+    this.constructor.prototype[name] = factory(injector, this)
     return this
   }
 
