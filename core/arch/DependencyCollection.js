@@ -5,7 +5,6 @@
  */
 const _ = require('lodash')
 const Collection = require('./Collection')
-const injector = require('./injector')
 
 /**
  * Dependency Collection
@@ -39,7 +38,8 @@ class DependencyCollection extends Collection {
    * Values
    */
   values () {
-    return this.map(descriptor => injector.get(descriptor.name))
+    let injector = require('./injector')
+    return this.map(dependency => injector.get(dependency.name))
   }
 }
 
