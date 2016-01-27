@@ -28,6 +28,23 @@ module.exports = function (sunstone) {
     .include(__dirname, './settings')
 
     /**
+     * Custom dependency type
+     */
+    .assembler('router', function (injector) {
+      let plugin = this
+      return function (name, factory) {
+        injector.register({
+          name,
+          type: 'router',
+          plugin: this.name,
+          factory
+        })
+
+        return this
+      }
+    })
+
+    /**
      * Module dependencies
      */
     .require({
@@ -39,6 +56,9 @@ module.exports = function (sunstone) {
       'express': 'express',
     })
 
+    /**
+     * Start callback
+     */
     .starter(function (server, settings) {
       let port = settings.port
       server.listen(port, function () {
