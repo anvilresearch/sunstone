@@ -35,22 +35,8 @@ class Dependency extends Model {
    * extractDependencies
    */
   extractDependencies () {
-    // TODO
-    // consider a generalized name for the function on a dependency
-    // and see if we can eliminate this kind of overly specific code
-    let lookup = {
-      'factory': 'factory',
-      'alias': 'factory',
-      'adapter': 'factory',
-      'module': 'factory',
-      'router': 'factory',
-      'extension': 'mutator',
-      'callback': 'callback',
-    }
-
-    let fn = this[lookup[this.type]]
-    if (fn  && !this.dependencies) {
-      this.dependencies = Dependency.extractDependencies(fn)
+    if (this.fn && !this.dependencies) {
+      this.dependencies = Dependency.extractDependencies(this.fn)
     }
   }
 
@@ -61,29 +47,34 @@ class Dependency extends Model {
     /**
      * factoryConform
      */
-    const factoryErrorMessage = 'A factory, mutator, callback or value is required'
-    function factoryConform (value, instance) {
-      // check for a value on the dependency
+    function fnConform (value, instance) {
+      // if there is a value present then dependency is valid
       if (instance.value) {
         return true
       }
 
-      // if there is no value present there needs to be a factory, callback or mutator
-      // and any of those need to be a function
-      let present = instance.factory || instance.callback || instance.mutator
-      return present
-        ? typeof present === 'function'
-        || instance.value
+      // check if there is a function present on the dependency
+      return instance.fn
+        ? typeof instance.fn === 'function'
         : false
     }
 
-    // seeing as the property would be the same for all factory types and value;
-    // create a single instance of the property for use over all four.
-    let factoryConformProperty = {
+    let fnConformProperty = { 
       type: 'any',
-      conform: factoryConform,
+      conform: function (value, instance) {
+        // if there is a value present then dependency is valid
+        if (instance.value) {
+          return true
+        }
+
+        // check if there is a function present on the dependency
+        return instance.fn
+          ? typeof instance.fn === 'function'
+          : false
+
+      },
       messages: {
-        conform: factoryErrorMessage
+        conform: 'function or value is required'
       }
     }
 
@@ -94,10 +85,8 @@ class Dependency extends Model {
       name: { type: 'string', required: true },
       type: { type: 'string', required: true },
       plugin: { type: 'string', required: true },
-      factory: factoryConformProperty,
-      mutator: factoryConformProperty,
-      callback: factoryConformProperty,
-      value: factoryConformProperty,
+      fn: fnConformProperty,
+      value: fnConformProperty,
       dependencies: { type: 'array' }
     }
   }
