@@ -15,7 +15,20 @@ let init = Symbol()
 /**
  * Plugin
  *
- * TODO
+ * Instances of Plugin expose an API which can be accessed by the developer to
+ * define plugins, along with methods used by the Registry to manage plugin lifecycle.
+ *
+ * The developer API can be used to:
+ *
+ *    - register node modules as dependencies on the injector
+ *    - include files in the plugin definition for managing large plugins
+ *    - define dependencies using factory methods
+ *    - alias dependencies
+ *    - create adapters to determine which implementation of an interface to
+ *      use at runtime
+ *    - access dependencies for mutation without creating new dependencies
+ *    - extend the plugin API
+ *    - register callbacks for managing plugin lifecycle
  *
  */
 class Plugin {
@@ -31,11 +44,8 @@ class Plugin {
   /**
    * Require
    *
-   * Adds dependencies to the injector by loading node modules.
-   * Accepts a string, array or object.
-   *
-   * By passing an object, you can load from the file system or
-   * alias the package name.
+   * Adds dependencies to the injector by loading node modules. Accepts a string,
+   * array or object. By passing an object you can alias the package name.
    *
    * Example
    *
@@ -81,11 +91,11 @@ class Plugin {
   /**
    * Include
    *
-   * Bootstrapping recursively loads all index.js files in the plugins directory.
-   * To make a new plugin, therefore you need to make a new directory.
-   * Additional files in the directory are ignored. However plugins may become
-   * larger than a single file can comfortable accommodate. Splitting a plugin
-   * into several files can be accomplished with this method.
+   * The bootstrapping process searches through the plugins directory looking for
+   * plugins to load. To make a new plugin you simply create a sub-directory with an
+   * index.js file. Additional files in the directory are incorporated using the
+   * include method. This allows developers to separate out one plugin into an
+   * arbitrary number of files.
    *
    * Example:
    *
@@ -99,8 +109,10 @@ class Plugin {
    *          'Server': '0.0.1'
    *        }
    *      })
-   *      .include(__dirname, 'other')
-   *      .include(__dirname, 'yetanother')
+   *      .initializer(function (plugin) {
+   *        .include(__dirname, 'other')
+   *        .include(__dirname, 'yetanother')
+   *      })
    *    }
    *
    *    // other.js
@@ -127,6 +139,11 @@ class Plugin {
 
   /**
    * Module
+   *
+   * This is used internally by `plugin.require()` to register modules with
+   * the type "module". This is important to maintain a distinction between
+   * components provided by plugins defined in the host (or extending applications)
+   * and components that originate from node modules.
    */
   module (name, fn) {
     injector.register({
@@ -139,6 +156,30 @@ class Plugin {
 
   /**
    * Factory
+   *
+   * The factory method registers a new dependency on the injector, validates it, and
+   * determines which other dependencies it requires.
+   *
+   * The first argument is the name of the new dependency and the second argument is a
+   * function that returns the value of the dependency. However, this dependency is not
+   * invoked at the time the dependency is registered.
+   *
+   * Getting a dependency from the Injector invokes the function and stores the return
+   * value.
+   *
+   * Example:
+   *
+   *    plugin
+   *      .factory('one', function () {
+   *        return 1
+   *      })
+   *      .factory('two', function () {
+   *        return 2
+   *      })
+   *      .factory('oneplustwo', function (one, two) {
+   *        return one + two
+   *      })
+   *
    */
   factory (name, fn) {
     injector.register({
@@ -154,7 +195,7 @@ class Plugin {
   /**
    * Adapter
    *
-   * Create factories that determin which implementation
+   * Create factories that determine which implementation
    * to use at injection time.
    *
    * Example:
@@ -168,10 +209,6 @@ class Plugin {
    *     })
    *     .factory('User', function (Resource) {})
    *
-   *
-   * TODO:
-   *  - is "adapter" the right name for this?
-   *  - is there any way enforce that it's used this way?
    */
   adapter (name, fn) {
     injector.register({

@@ -19,9 +19,9 @@ const plugins = Symbol()
 /**
  * Registry
  *
- * Plugins are loaded and maintained in memory by the registry. Instances of
- * the Registry class can find and load plugins from the filesystem, resolve
- * plugin dependencies, order plugins such that their dependencies are all met,
+ * Plugins are loaded and maintained in memory by the registry. The Registry
+ * class can find and load plugins from the filesystem, resolve plugin
+ * dependencies, order plugins such that their dependencies are all met,
  * and initialize plugins. This process is called bootstrapping and it is the
  * beginning of the plugin lifecycle.
  *
