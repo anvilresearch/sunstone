@@ -14,6 +14,65 @@ const dependencies = Symbol()
 
 /**
  * Injector
+ *
+ * Dependencies are registered and maintained in memory by the Injector.
+ *
+ * Registering a dependency on the Injector validates it and determines which other
+ * dependencies it requires. This does not invoke the `fn` property, if one is
+ * provided.
+ *
+ *    injector.register({
+ *      name: 'server',
+ *      type: 'factory',
+ *      plugin: '<plugin.name>',
+ *      fn: function (express, logger) {
+ *        let server = express()
+ *        server.use(logger)
+ *        return server
+ *      }
+ *    })
+ *
+ * Getting a dependency from the Injector invokes the dependency's `fn` property as
+ * a function and caches the return value on the `value` property for future calls
+ * to `get`. This recursively satisfies the requirements of `fn`.
+ *
+ *    injector.get('server')
+ *    => server
+ *
+ *    // this caches the return value of `fn` as `value`
+ *    => Dependency {
+ *         name: 'server',
+ *         type: 'factory',
+ *         plugin: '<plugin.name>',
+ *         fn: function (express, logger) { ... },
+ *         value: server
+ *       }
+ *
+ * Invoking a dependency calls it's `fn` property as a function, without caching or
+ * returning a result.
+ *
+ *    injector.register({
+ *      name: 'server:starter',
+ *      type: 'callback',
+ *      plugin: 'server',
+ *      fn: function (server) {
+ *        server.listen()
+ *      }
+ *    })
+ *
+ *    injector.invoke('server:starter')
+ *
+ * Filtering a dependency returns a DependencyCollection instance filtered by a
+ * predicate.
+ *
+ *    injector.filter({ type: 'factory', plugin: 'MyPlugin' })
+ *    => DependencyCollection [
+ *         Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *         Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *         Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *         // ...
+ *       ]
+ *
  */
 class Injector {
 
@@ -26,6 +85,16 @@ class Injector {
       injector: {
         name: 'injector',
         value: this
+      },
+      Dependency {
+        name: 'redis',
+        type: 'factory',
+        plugin: 'Server',
+        fn: function (ioredis, settings) {
+          return new ioredis(settings.redis)
+        },
+        dependencies: ['ioredis', 'settings'],
+        value: <redis>
       }
     }
   }
@@ -112,7 +181,7 @@ class Injector {
    * Returns a DependencyCollection filtered by a predicate.
    */
   filter (predicate) {
-    let collection = new DependencyCollection(this[dependencies], this)
+    let collection = new DependencyCollection(this[dependencies])
     return collection.filter(predicate)
   }
 
