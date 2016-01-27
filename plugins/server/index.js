@@ -32,12 +32,12 @@ module.exports = function (sunstone) {
      */
     .assembler('router', function (injector) {
       let plugin = this
-      return function (name, factory) {
+      return function (name, fn) {
         injector.register({
           name,
           type: 'router',
           plugin: this.name,
-          factory
+          fn
         })
 
         return this
