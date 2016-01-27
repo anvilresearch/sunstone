@@ -85,16 +85,6 @@ class Injector {
       injector: {
         name: 'injector',
         value: this
-      },
-      Dependency {
-        name: 'redis',
-        type: 'factory',
-        plugin: 'Server',
-        fn: function (ioredis, settings) {
-          return new ioredis(settings.redis)
-        },
-        dependencies: ['ioredis', 'settings'],
-        value: <redis>
       }
     }
   }
