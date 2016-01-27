@@ -66,9 +66,7 @@ class Injector {
       let values = []
       let fn = dependency.fn
       dependency.dependencies.forEach((dependency) => {
-        if (dependency) {
-          values.push(this.get(dependency))
-        }
+        values.push(this.get(dependency))
       })
 
       value = dependency.value = fn.apply(null, values)
