@@ -13,14 +13,31 @@ const Registry = require('./Registry')
  * injector and registry for the application. The bootstrap method uses the
  * registry to find, load, validate and initialize plugins. The run method
  * starts the application.
- *
+ * 
+ * TODO
+ *   - decide how to handle directory/node_modules configuration
+ *   - needs to handle customized plugin directories
+ * 
  * Example:
  *
  *    // host application
- *    module.exports = require('sunstone').bootstrap({})
+ *    module.exports = require('sunstone').configure({
+ *      directories: [
+ *        path.join(__dirname, 'plugins'),
+ *        path.join(process.cwd(), 'plugins')
+ *      ],
+ *      node_modules: [
+ *        'sunstone-server',
+ *        'sunstone-logger'
+ *      ]
+ *    })
  *
  *    // extending application
- *    require('my-app').run()
+ *    require('my-app').bootstrap({
+ *      directories: [
+ *        other
+ *      ]
+ *    }).run()
  */
 class Host {
 
