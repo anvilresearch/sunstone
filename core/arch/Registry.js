@@ -24,6 +24,38 @@ const plugins = Symbol()
  * plugin dependencies, order plugins such that their dependencies are all met,
  * and initialize plugins. This process is called bootstrapping and it is the
  * beginning of the plugin lifecycle.
+ *
+ * A single registry instance is created by the Host constructor, which is then
+ * used in a variety of ways.
+ *
+ * Instantiating:
+ *
+ *    let registry = new Registry({ ... })
+ *
+ * Storing and querying plugins:
+ *
+ *    registry.set(<name>, new Plugin({ ... }))
+ *    registry.get(<name>)
+ *    registry.del(<name>)
+ *
+ *    registry.filter({ type: '<type>' })
+ *    registry.filter(plugin => <boolean-expr>)
+ *
+ * Bootstrapping:
+ *
+ *    registry
+ *      .glob()
+ *      .require()
+ *      .resolve()
+ *      .prioritize()
+ *      .initialize()
+ *
+ * Plugin registration:
+ *
+ *    module.exports = function (<registry>) {
+ *      <registry>.plugin(<name>, <metadata>).initializer(<callback>)
+ *    }
+ *
  */
 class Registry {
 
