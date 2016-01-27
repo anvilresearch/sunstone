@@ -128,24 +128,24 @@ class Plugin {
   /**
    * Module
    */
-  module (name, factory) {
+  module (name, fn) {
     injector.register({
       name,
       type: 'module',
       plugin: this.name,
-      factory
+      fn
     })
   }
 
   /**
    * Factory
    */
-  factory (name, factory) {
+  factory (name, fn) {
     injector.register({
       name,
       type: 'factory',
       plugin: this.name,
-      factory
+      fn
     })
 
     return this
@@ -173,12 +173,12 @@ class Plugin {
    *  - is "adapter" the right name for this?
    *  - is there any way enforce that it's used this way?
    */
-  adapter (name, factory) {
+  adapter (name, fn) {
     injector.register({
       name,
       type: 'adapter',
       plugin: this.name,
-      factory
+      fn
     })
 
     return this
@@ -208,7 +208,7 @@ class Plugin {
       name: alias,
       type: 'alias',
       plugin: this.name,
-      factory: () => {
+      fn: () => {
         return injector.get(name)
       }
     })
@@ -262,12 +262,12 @@ class Plugin {
    *        })
    *     })
    */
-  extension (name, mutator) {
+  extension (name, fn) {
     injector.register({
       name,
       type: 'extension',
       plugin: this.name,
-      mutator
+      fn
     })
 
     return this
@@ -324,8 +324,8 @@ class Plugin {
    * - there should possibly be a way to create a starter method automatically for
    *   an assembler to save that boilerplate
    */
-  assembler (name, factory) {
-    this.constructor.prototype[name] = factory(injector, this)
+  assembler (name, fn) {
+    this.constructor.prototype[name] = fn(injector, this)
     return this
   }
 
@@ -378,12 +378,12 @@ class Plugin {
    *        })
    *      })
    */
-  starter (callback) {
+  starter (fn) {
     injector.register({
       name: `${this.name}:starter`,
       type: 'callback',
       plugin: this.name,
-      callback: callback
+      fn
     })
 
     return this
@@ -400,12 +400,12 @@ class Plugin {
   /**
    * Stopper
    */
-  stopper (callback) {
+  stopper (fn) {
     injector.register({
       name: `${this.name}:stopper`,
       type: 'callback',
       plugin: this.name,
-      callback: callback
+      fn
     })
 
     return this

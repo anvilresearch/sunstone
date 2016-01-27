@@ -40,7 +40,10 @@ class Injector {
       dependency.extractDependencies()
       this[dependencies][dependency.name] = dependency
     } else {
-      console.log(validation.message, validation.errors)
+      console.log(`Dependency[${dependency.name}]: `, validation.message)
+      Object.keys(validation.errors).forEach(key => {
+        console.log(`${key}: ${validation.errors[key].message}`)
+      })
     }
   }
 
@@ -61,14 +64,14 @@ class Injector {
 
     if (!value) {
       let values = []
-      let factory = dependency.factory
+      let fn = dependency.fn
       dependency.dependencies.forEach((dependency) => {
         if (dependency) {
           values.push(this.get(dependency))
         }
       })
 
-      value = dependency.value = factory.apply(null, values)
+      value = dependency.value = fn.apply(null, values)
 
       // check the interface and invoke additional methods?
 
@@ -85,13 +88,17 @@ class Injector {
    * can be registered on the injector for event handling. This method invokes such
    * callbacks by name, providing any required dependencies as arguments. It fails
    * silently if no callback is found.
+   *
+   * TODO
+   * consider consolidating repeated code in invoke and get into a single 'internal'
+   * function and wrap it for get and invoke functionality
    */
   invoke (name) {
     let dependency = this[dependencies][name]
 
     if (dependency) {
       let values = []
-      let callback = dependency.callback
+      let fn = dependency.fn
 
       dependency.dependencies.forEach(item => {
         if (item) {
@@ -99,7 +106,7 @@ class Injector {
         }
       })
 
-      dependency.callback.apply(null, values)
+      fn.apply(null, values)
     }
   }
 
