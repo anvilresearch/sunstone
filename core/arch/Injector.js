@@ -48,28 +48,27 @@ class Injector {
    * Get
    */
   get (name) {
-    let descriptor = this[dependencies][name]
+    let dependency = this[dependencies][name]
 
-    if (!descriptor) {
+    if (!dependency) {
       // is there any case for failing silently?
       // logging an error?
       // or should we just explode?
       throw new Error(`Unknown dependency "${name}"`)
     }
 
-    let value = descriptor.value
+    let value = dependency.value
 
     if (!value) {
       let values = []
-      let factory = descriptor.factory
-
-      descriptor.dependencies.forEach((dependency) => {
+      let factory = dependency.factory
+      dependency.dependencies.forEach((dependency) => {
         if (dependency) {
           values.push(this.get(dependency))
         }
       })
 
-      value = descriptor.value = factory.apply(null, values)
+      value = dependency.value = factory.apply(null, values)
 
       // check the interface and invoke additional methods?
 
