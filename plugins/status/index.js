@@ -8,13 +8,16 @@ module.exports = function (sunstone) {
       'Server': '>=0.0.1'
     }
   })
-  .initialize(function (plugin) {
-    plugin
+
+  /**
+   * Plugin initializer
+   */
+  .initializer(function (plugin) {
 
     /**
      * Status
      */
-    .router('status', function (Router) {
+    plugin.router('status', function (Router) {
       let router = Router()
 
       router.get('/', function (req, res, next) {
@@ -23,5 +26,19 @@ module.exports = function (sunstone) {
 
       return router
     })
-  })  
+
+    /**
+     * Start callback
+     */
+    plugin.starter(function (injector, server) {
+      injector.filter({
+        plugin: 'Status',
+        type: 'router'
+      })
+      .values()
+      .forEach(router => {
+        server.use(router)
+      })
+    })
+  })
 }
