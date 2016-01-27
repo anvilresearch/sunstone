@@ -27,7 +27,8 @@ class Dependency extends Model {
     let str = fn.toString().replace(STRIP_COMMENTS, '')
     let match = str.match(ARROW_ARG) || str.match(FN_ARGS)
     let args = match[1].split(FN_ARG_SPLIT)
-    return args.map(str => str.trim())
+    let result = args.map(str => str.trim())
+    return result[0] !== '' ? result : []
   }
 
   /**
@@ -42,6 +43,7 @@ class Dependency extends Model {
       'alias': 'factory',
       'adapter': 'factory',
       'module': 'factory',
+      'router': 'factory',
       'extension': 'mutator',
       'callback': 'callback',
     }
