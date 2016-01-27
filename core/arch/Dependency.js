@@ -44,10 +44,13 @@ class Dependency extends Model {
    * get schema
    */
   static get schema () {
+
     /**
-     * factoryConform
+     * conform
+     * 
+     * validation function for factory function and value on schema
      */
-    function fnConform (value, instance) {
+    function conform (value, instance) {
       // if there is a value present then dependency is valid
       if (instance.value) {
         return true
@@ -59,20 +62,11 @@ class Dependency extends Model {
         : false
     }
 
-    let fnConformProperty = { 
+    // a standardised conformer property for factory function (fn)
+    // and value on schema
+    let conformer = { 
       type: 'any',
-      conform: function (value, instance) {
-        // if there is a value present then dependency is valid
-        if (instance.value) {
-          return true
-        }
-
-        // check if there is a function present on the dependency
-        return instance.fn
-          ? typeof instance.fn === 'function'
-          : false
-
-      },
+      conform,
       messages: {
         conform: 'function or value is required'
       }
@@ -85,8 +79,8 @@ class Dependency extends Model {
       name: { type: 'string', required: true },
       type: { type: 'string', required: true },
       plugin: { type: 'string', required: true },
-      fn: fnConformProperty,
-      value: fnConformProperty,
+      fn: conformer,
+      value: conformer,
       dependencies: { type: 'array' }
     }
   }
