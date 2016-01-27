@@ -3,13 +3,13 @@
 /**
  * Dependencies
  */
-var _ = require('lodash')
-var path = require('path')
+const _ = require('lodash')
+const path = require('path')
+const injector = require('./injector')
 
 /**
  * Symbols
  */
-let injector = Symbol()
 let init = Symbol()
 
 /**
@@ -23,10 +23,9 @@ class Plugin {
   /**
    * Constructor
    */
-  constructor (name, metadata, _injector) {
+  constructor (name, metadata) {
     this.name = name
     this.metadata = metadata
-    this[injector] = _injector
   }
 
   /**
@@ -130,7 +129,7 @@ class Plugin {
    * Module
    */
   module (name, factory) {
-    this[injector].register({
+    injector.register({
       name,
       type: 'module',
       plugin: this.name,
@@ -142,7 +141,7 @@ class Plugin {
    * Factory
    */
   factory (name, factory) {
-    this[injector].register({
+    injector.register({
       name,
       type: 'factory',
       plugin: this.name,
@@ -175,7 +174,7 @@ class Plugin {
    *  - is there any way enforce that it's used this way?
    */
   adapter (name, factory) {
-    this[injector].register({
+    injector.register({
       name,
       type: 'adapter',
       plugin: this.name,
@@ -205,12 +204,12 @@ class Plugin {
    *
    */
   alias (alias, name) {
-    this[injector].register({
+    injector.register({
       name: alias,
       type: 'alias',
       plugin: this.name,
       factory: () => {
-        return this[injector].get(name)
+        return injector.get(name)
       }
     })
 
@@ -264,7 +263,7 @@ class Plugin {
    *     })
    */
   extension (name, mutator) {
-    this[injector].register({
+    injector.register({
       name,
       type: 'extension',
       plugin: this.name,
@@ -326,7 +325,7 @@ class Plugin {
    *   an assembler to save that boilerplate
    */
   assembler (name, factory) {
-    this[name] = factory(this[injector], this)
+    this[name] = factory(injector, this)
     return this
   }
 
@@ -380,7 +379,7 @@ class Plugin {
    *      })
    */
   starter (callback) {
-    this[injector].register({
+    injector.register({
       name: `${this.name}:starter`,
       type: 'callback',
       plugin: this.name,
@@ -394,7 +393,7 @@ class Plugin {
    * Start
    */
   start () {
-    this[injector].invoke(`${this.name}:starter`)
+    injector.invoke(`${this.name}:starter`)
     return this
   }
 
@@ -402,7 +401,7 @@ class Plugin {
    * Stopper
    */
   stopper (callback) {
-    this[injector].register({
+    injector.register({
       name: `${this.name}:stopper`,
       type: 'callback',
       plugin: this.name,
@@ -416,7 +415,7 @@ class Plugin {
    * Stop
    */
   stop () {
-    this[injector].invoke(`${this.name}:stopper`)
+    injector.invoke(`${this.name}:stopper`)
     return this
   }
 

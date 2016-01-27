@@ -3,7 +3,7 @@
 /**
  * Dependencies
  */
-const Injector = require('./Injector')
+const injector = require('./injector')
 const Registry = require('./Registry')
 
 /**
@@ -28,11 +28,9 @@ class Host {
    * Constructor
    */
   constructor (options) {
-    let injector = new Injector()
-    let registry = new Registry(options, injector)
+    let registry = new Registry(options)
 
     this.options = options
-    this.injector = injector
     this.registry = registry
   }
 
@@ -56,7 +54,7 @@ class Host {
    * Run
    */
   run () {
-    this.injector.get('main')
+    injector.get('main')
     this.registry
       // TODO
       //.filter({ enabled: true })

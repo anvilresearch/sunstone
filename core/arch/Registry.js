@@ -7,13 +7,13 @@ const _ = require('lodash')
 const path = require('path')
 const glob = require('glob')
 const semver = require('semver')
+const injector = require('./injector')
 const Plugin = require('./Plugin')
 const PluginCollection = require('./PluginCollection')
 
 /**
  * Symbols
  */
-const injector = Symbol()
 const plugins = Symbol()
 
 /**
@@ -30,9 +30,8 @@ class Registry {
   /**
    * constructor
    */
-  constructor (options, _injector) {
+  constructor (options) {
     this.options = options
-    this[injector] = _injector
     this[plugins] = {}
     this.prioritized = new PluginCollection()
     this.directories = [
@@ -211,7 +210,7 @@ class Registry {
    */
   plugin (name, metadata) {
     if (metadata) {
-      return this.set(name, new Plugin(name, metadata, this[injector]))
+      return this.set(name, new Plugin(name, metadata))
     } else {
       return this.get(name)
     }

@@ -3,12 +3,8 @@
 /**
  * Dependencies
  */
-var _ = require('lodash')
-
-/**
- * Symbols
- */
-const injector = Symbol()
+const _ = require('lodash')
+const injector = require('./injector')
 
 /**
  * Dependency Collection
@@ -41,9 +37,8 @@ class DependencyCollection extends Array {
   /**
    * Constructor
    */
-  constructor (collection, _injector) {
+  constructor (collection) {
     super()
-    this[injector] = _injector
 
     _.values(collection).forEach(item => {
       this.push(item)
@@ -54,14 +49,14 @@ class DependencyCollection extends Array {
    * Find
    */
   filter (predicate) {
-    return new DependencyCollection(_.filter(this, predicate), this[injector])
+    return new DependencyCollection(_.filter(this, predicate), injector)
   }
 
   /**
    * Values
    */
   values () {
-    return this.map(descriptor => this[injector].get(descriptor.name))
+    return this.map(descriptor => injector.get(descriptor.name))
   }
 }
 

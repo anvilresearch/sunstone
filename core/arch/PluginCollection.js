@@ -15,6 +15,7 @@ class PluginCollection extends Array {
    */
   constructor (collection) {
     super()
+    
     _.values(collection).forEach(item => {
       this.push(item)
     })
