@@ -4,7 +4,7 @@
  * Dependencies
  */
 const _ = require('lodash')
-const Colleciton = require('./Collection')
+const Collection = require('./Collection')
 const injector = require('./injector')
 
 /**
@@ -33,7 +33,7 @@ const injector = require('./injector')
  *    dc.filter({ type: 'factory' }).values()
  *
  */
-class DependencyCollection extends Colleciton {
+class DependencyCollection extends Collection {
 
   /**
    * Values
