@@ -6,6 +6,7 @@
 const _ = require('lodash')
 const path = require('path')
 const injector = require('./injector')
+const callsite = require('callsite')
 
 /**
  * Symbols
@@ -110,8 +111,8 @@ class Plugin {
    *        }
    *      })
    *      .initializer(function (plugin) {
-   *        .include(__dirname, 'other')
-   *        .include(__dirname, 'yetanother')
+   *        .include('./other')
+   *        .include('./yetanother')
    *      })
    *    }
    *
@@ -130,10 +131,14 @@ class Plugin {
    *
    *    }
    */
-  include () {
-    let segments = Array.prototype.slice.call(arguments, this.include.length)
-    let filepath = path.join.apply(null, segments)
+  include (filename) {
+    // prepend file path from call stack onto the given, possibly relative, filename
+    let caller = callsite()[1]
+    let callerpath = caller.getFileName()
+    let filepath = path.join(path.dirname(callerpath), filename)
+
     require(filepath)(this)
+
     return this
   }
 
