@@ -1,9 +1,4 @@
 'use strict'
 
-var server = require('./core/arch/Host').bootstrap()
+module.exports = require('./core/arch/Host')
 
-if (!module.parent) {
-  server.run()
-} else {
-  module.exports = server
-}
