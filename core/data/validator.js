@@ -58,4 +58,4 @@ validate.ValidationError = ValidationError
  * Exports
  */
 
-module.exports = { validate }
+module.exports = { validate, ValidationError }
