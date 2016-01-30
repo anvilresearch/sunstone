@@ -1,0 +1,13 @@
+{
+  "source": {
+    "include": [
+      "./core/arch"
+    ]
+  },
+  "opts": {
+    "destination": "./docs/build"
+  },
+  "plugins": [
+    "plugins/markdown"
+  ]
+}
