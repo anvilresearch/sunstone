@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const _ = require('lodash')
 const path = require('path')
@@ -13,12 +14,14 @@ const PluginCollection = require('./PluginCollection')
 
 /**
  * Symbols
+ * @ignore
  */
 const plugins = Symbol()
 
 /**
  * Registry
  *
+ * @class
  * Plugins are loaded and maintained in memory by the registry. The Registry
  * class can find and load plugins from the filesystem, resolve plugin
  * dependencies, order plugins such that their dependencies are all met,
@@ -30,37 +33,49 @@ const plugins = Symbol()
  *
  * Instantiating:
  *
- *    let registry = new Registry({ ... })
+ * ```js
+ * let registry = new Registry({ ... })
+ * ```
  *
  * Storing and querying plugins:
  *
- *    registry.set(<name>, new Plugin({ ... }))
- *    registry.get(<name>)
- *    registry.del(<name>)
+ * ```js
+ * registry.set(<name>, new Plugin({ ... }))
+ * registry.get(<name>)
+ * registry.del(<name>)
  *
- *    registry.filter({ type: '<type>' })
- *    registry.filter(plugin => <boolean-expr>)
+ * registry.filter({ type: '<type>' })
+ * registry.filter(plugin => <boolean-expr>)
+ * ```
  *
  * Bootstrapping:
  *
- *    registry
- *      .glob()
- *      .require()
- *      .resolve()
- *      .prioritize()
- *      .initialize()
+ * ```js
+ * registry
+ *   .glob()
+ *   .require()
+ *   .resolve()
+ *   .prioritize()
+ *   .initialize()
+ * ```
  *
  * Plugin registration:
  *
- *    module.exports = function (<registry>) {
- *      <registry>.plugin(<name>, <metadata>).initializer(<callback>)
- *    }
+ * ```js
+ * module.exports = function (<registry>) {
+ *   <registry>.plugin(<name>, <metadata>).initializer(<callback>)
+ * }
+ * ```
  *
+ * This module requires {@link Plugin} and {@link PluginCollection}.
  */
 class Registry {
 
   /**
    * constructor
+   *
+   * @description Initialize a Registry instance.
+   * @param {object} options options object
    */
   constructor (options) {
     this.options = options
@@ -73,6 +88,10 @@ class Registry {
 
   /**
    * get
+   *
+   * @description Retrieve a plugin from the registry.
+   * @param {string} name name of the plugin
+   * @returns {Plugin}
    */
   get (name) {
     return this[plugins][name]
@@ -80,6 +99,11 @@ class Registry {
 
   /**
    * set
+   *
+   * @description Set a plugin on the registry.
+   * @param {string} name name of the plugin
+   * @param {Plugin} plugin name of the plugin
+   * @returns {Plugin}
    */
   set (name, plugin) {
     if (!(plugin instanceof Plugin)) {
@@ -93,6 +117,10 @@ class Registry {
 
   /**
    * del
+   *
+   * @description Remove a plugin from the registry.
+   * @param {string} name name of the plugin
+   * @returns {Plugin}
    */
   del (name) {
     return delete this[plugins][name]
@@ -100,6 +128,16 @@ class Registry {
 
   /**
    * filter
+   *
+   * @description Query the registry for plugins matching a predicate
+   * @param {object|function} predicate description or function for matching plugins
+   * @returns {PluginCollection}
+   *
+   * @example <caption>Object predicate</caption>
+   * registry.filter({ enabled: true })
+   *
+   * @example <caption>Function predicate</caption>
+   * registry.filter(plugin => !!plugin.name.match(regexp))
    */
   filter (predicate) {
     return this.prioritized.filter(predicate)
@@ -107,6 +145,8 @@ class Registry {
 
   /**
    * glob
+   *
+   * @description Search the configured directories for plugin index files.
    */
   glob () {
     this.files = this.directories.reduce((results, directory) => {
@@ -121,6 +161,8 @@ class Registry {
 
   /**
    * require
+   *
+   * @description Load plugins to the registry without initializing them.
    */
   require () {
     this.files.forEach(filename => {
@@ -133,6 +175,7 @@ class Registry {
   /**
    * resolve
    *
+   * @description
    * Resolves and validates dependencies and dependents of
    * all plugins.
    */
@@ -173,6 +216,7 @@ class Registry {
   /**
    * satisfy
    *
+   * @description
    * Given a list of plugins without dependencies and a list of
    * plugins with dependencies, return a list of plugins such that
    * no plugins appear before their dependencies.
@@ -202,6 +246,7 @@ class Registry {
   /**
    * prioritize
    *
+   * @description
    * Given a list of plugins with dependencies, sort the list such that
    * all dependencies can be met by iterating over the list.
    */
@@ -229,6 +274,7 @@ class Registry {
   /**
    * initialize
    *
+   * @description
    * Iterate over prioritized plugins and invoke initializer methods.
    */
   initialize () {
@@ -239,6 +285,13 @@ class Registry {
 
   /**
    * plugin
+   *
+   * @description
+   * Register or retrieve a plugin from the injector with a name and metadata object.
+   *
+   * @param {string} name plugin name
+   * @param {object} metadata plugin metadata
+   * @returns {Plugin}
    */
   plugin (name, metadata) {
     if (metadata) {

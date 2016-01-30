@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const _ = require('lodash')
 const DependencyCollection = require('./DependencyCollection')
@@ -9,75 +10,86 @@ const Dependency = require('./Dependency')
 
 /**
  * Symbols
+ * @ignore
  */
 const dependencies = Symbol()
 
 /**
  * Injector
  *
+ * @class
  * Dependencies are registered and maintained in memory by the Injector.
  *
  * Registering a dependency on the Injector validates it and determines which other
  * dependencies it requires. This does not invoke the `fn` property, if one is
  * provided.
  *
- *    injector.register({
- *      name: 'server',
- *      type: 'factory',
- *      plugin: '<plugin.name>',
- *      fn: function (express, logger) {
- *        let server = express()
- *        server.use(logger)
- *        return server
- *      }
- *    })
+ * ```js
+ * injector.register({
+ *   name: 'server',
+ *   type: 'factory',
+ *   plugin: '<plugin.name>',
+ *   fn: function (express, logger) {
+ *     let server = express()
+ *     server.use(logger)
+ *     return server
+ *   }
+ * })
+ * ```
  *
  * Getting a dependency from the Injector invokes the dependency's `fn` property as
  * a function and caches the return value on the `value` property for future calls
  * to `get`. This recursively satisfies the requirements of `fn`.
  *
- *    injector.get('server')
- *    => server
- *
- *    // this caches the return value of `fn` as `value`
- *    => Dependency {
- *         name: 'server',
- *         type: 'factory',
- *         plugin: '<plugin.name>',
- *         fn: function (express, logger) { ... },
- *         value: server
- *       }
+ * ```js
+ * injector.get('server')
+ * => server
+
+ * // this caches the return value of `fn` as `value`
+ * => Dependency {
+ *      name: 'server',
+ *      type: 'factory',
+ *      plugin: '<plugin.name>',
+ *      fn: function (express, logger) { ... },
+ *      value: server
+ *    }
+ * ```
  *
  * Invoking a dependency calls it's `fn` property as a function, without caching or
  * returning a result.
  *
- *    injector.register({
- *      name: 'server:starter',
- *      type: 'callback',
- *      plugin: 'server',
- *      fn: function (server) {
- *        server.listen()
- *      }
- *    })
+ * ```js
+ * injector.register({
+ *   name: 'server:starter',
+ *   type: 'callback',
+ *   plugin: 'server',
+ *   fn: function (server) {
+ *     server.listen()
+ *   }
+ * })
  *
- *    injector.invoke('server:starter')
+ * injector.invoke('server:starter')
+ * ```
  *
  * Filtering a dependency returns a DependencyCollection instance filtered by a
  * predicate.
  *
- *    injector.filter({ type: 'factory', plugin: 'MyPlugin' })
- *    => DependencyCollection [
- *         Dependency { type: 'factory', plugin: 'MyPlugin', ... },
- *         Dependency { type: 'factory', plugin: 'MyPlugin', ... },
- *         Dependency { type: 'factory', plugin: 'MyPlugin', ... },
- *         // ...
- *       ]
- *
+ * ```js
+ * injector.filter({ type: 'factory', plugin: 'MyPlugin' })
+ * => DependencyCollection [
+ *      Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *      Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *      Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *      // ...
+ *    ]
+ * ```
  */
 class Injector {
 
   /**
    * Constructor
+   *
+   * @description Initialize the injector with a reference to itself as a dependency.
    */
   constructor () {
     this[dependencies] = {
@@ -91,10 +103,15 @@ class Injector {
 
   /**
    * Register
+   *
+   * @description Register a Dependency instance on the injector without invoking its
+   * factory function.
+   * @param {object} descriptor dependency properties
    */
   register (descriptor) {
     let dependency = new Dependency(descriptor)
     let validation = dependency.validate()
+
     if (validation.valid) {
       dependency.extractDependencies()
       this[dependencies][dependency.name] = dependency
@@ -108,6 +125,10 @@ class Injector {
 
   /**
    * Get
+   *
+   * @description
+   * Get a dependency from the injector by invoking it's function or value property.
+   * @param {string} name dependency name
    */
   get (name) {
     let dependency = this[dependencies][name]
@@ -141,6 +162,7 @@ class Injector {
   /**
    * Invoke
    *
+   * @description
    * Lifecycle callbacks which use dependencies on the injector, but return no values
    * can be registered on the injector for event handling. This method invokes such
    * callbacks by name, providing any required dependencies as arguments. It fails
@@ -149,6 +171,8 @@ class Injector {
    * TODO
    * consider consolidating repeated code in invoke and get into a single 'internal'
    * function and wrap it for get and invoke functionality
+   *
+   * @param {string} name dependency name
    */
   invoke (name) {
     let dependency = this[dependencies][name]
@@ -168,7 +192,10 @@ class Injector {
   /**
    * Filter
    *
-   * Returns a DependencyCollection filtered by a predicate.
+   *
+   * @description Query the injector for dependencies matching a predicate
+   * @param {object|function} predicate description or function for matching dependencies
+   * @returns {DependencyCollection}
    */
   filter (predicate) {
     let collection = new DependencyCollection(this[dependencies])

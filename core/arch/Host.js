@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const injector = require('./injectorInstance')
 const Registry = require('./Registry')
@@ -9,40 +10,54 @@ const Registry = require('./Registry')
 /**
  * Host
  *
+ * @class
  * This is the main class of the program. The constructor initializes an
  * injector and registry for the application. The bootstrap method uses the
  * registry to find, load, validate and initialize plugins. The run method
  * starts the application.
- * 
- * TODO
+ *
+ * **TODO**
  *   - decide how to handle directory/node_modules configuration
  *   - needs to handle customized plugin directories
- * 
- * Example:
  *
- *    // host application
- *    module.exports = require('sunstone').configure({
- *      directories: [
- *        path.join(__dirname, 'plugins'),
- *        path.join(process.cwd(), 'plugins')
- *      ],
- *      node_modules: [
- *        'sunstone-server',
- *        'sunstone-logger'
- *      ]
- *    })
+ * **Examples**
  *
- *    // extending application
- *    require('my-app').bootstrap({
- *      directories: [
- *        other
- *      ]
- *    }).run()
+ * *Host Application*
+ *
+ * ```js
+ * module.exports = require('sunstone').configure({
+ *   directories: [
+ *     path.join(__dirname, 'plugins'),
+ *     path.join(process.cwd(), 'plugins')
+ *   ],
+ *   node_modules: [
+ *     'sunstone-server',
+ *     'sunstone-logger'
+ *   ]
+ * })
+ * ```
+ *
+ * *Extending Application*
+ *
+ * ```js
+ * require('my-app').bootstrap({
+ *   directories: [
+ *     other
+ *   ]
+ * }).run()
+ * ```
+ *
+ * This class requires the modules {@link Registry}.
  */
 class Host {
 
   /**
    * Constructor
+   * @description
+   * Initialize a Host.
+   *
+   * @param {object} options options object
+   * @requires Registry
    */
   constructor (options) {
     let registry = new Registry(options)
@@ -53,6 +68,12 @@ class Host {
 
   /**
    * Bootstrap
+   *
+   * @description
+   * Create a new Host instance with the provided options and initialize the
+   * application.
+   *
+   * @param {object} options options object
    */
   static bootstrap (options) {
     let host = new Host(options)
@@ -69,6 +90,10 @@ class Host {
 
   /**
    * Run
+   *
+   * @description
+   * Run starts the application by injecting the main dependency, then iterating
+   * through all the plugins and starting each of them.
    */
   run () {
     injector.get('main')
