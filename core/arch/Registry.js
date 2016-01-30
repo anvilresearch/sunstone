@@ -7,7 +7,7 @@ const _ = require('lodash')
 const path = require('path')
 const glob = require('glob')
 const semver = require('semver')
-const injector = require('./injector')
+const injector = require('./injectorInstance')
 const Plugin = require('./Plugin')
 const PluginCollection = require('./PluginCollection')
 

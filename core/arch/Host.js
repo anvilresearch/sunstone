@@ -3,7 +3,7 @@
 /**
  * Dependencies
  */
-const injector = require('./injector')
+const injector = require('./injectorInstance')
 const Registry = require('./Registry')
 
 /**

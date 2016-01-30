@@ -5,7 +5,7 @@
  */
 const _ = require('lodash')
 const path = require('path')
-const injector = require('./injector')
+const injector = require('./injectorInstance')
 const callsite = require('callsite')
 
 /**
