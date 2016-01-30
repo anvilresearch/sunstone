@@ -2,11 +2,13 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const Model = require('../data/Model')
 
 /**
  * Constants
+ * @ignore
  */
 const ARROW_ARG = /^([^\(]+?)=>/
 const FN_ARGS = /^[^\(]*\(\s*([^\)]*)\)/m
@@ -16,12 +18,21 @@ const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
 
 /**
  * Dependency
+ *
+ * @class
+ * Instances of Dependency are self-validating containers for
+ * dependencies registered on the injector.
+ *
+ * @param {object} descriptor Dependency descriptor
+ *
+ * @extends Model
  */
 class Dependency extends Model {
 
   /**
    * Extract Dependencies
    * Adapted from AngularJS.
+   * @private
    */
   static extractDependencies (fn) {
     let str = fn.toString().replace(STRIP_COMMENTS, '')
@@ -33,6 +44,11 @@ class Dependency extends Model {
 
   /**
    * extractDependencies
+   *
+   * @description
+   * Parse dependencies and store them as an array of dependency
+   * names on this instance.
+   * 
    */
   extractDependencies () {
     if (this.fn && !this.dependencies) {
@@ -42,6 +58,7 @@ class Dependency extends Model {
 
   /**
    * get schema
+   * @private
    */
   static get schema () {
 
