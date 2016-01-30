@@ -5,7 +5,8 @@
     ]
   },
   "opts": {
-    "destination": "./docs/build"
+    "destination": "./docs/build",
+    "readme": "./README.md"
   },
   "plugins": [
     "plugins/markdown"
