@@ -38,7 +38,7 @@ class DependencyCollection extends Collection {
    * Values
    */
   values () {
-    let injector = require('./injector')
+    let injector = require('./injectorInstance')
     return this.map(dependency => injector.get(dependency.name))
   }
 }
