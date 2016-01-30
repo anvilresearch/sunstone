@@ -2,14 +2,12 @@
 
 /**
  * Injector
-<<<<<<< HEAD
  * @ignore
  */
 const Injector = require('./Injector')
 
 /**
  * Singleton
-<<<<<<< HEAD
  * @ignore
  */
 const injector = new Injector()
