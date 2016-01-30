@@ -19,10 +19,12 @@ let expect = chai.expect
  * Code under test
  */
 const Initializer = require(path.join(process.cwd(), 'core', 'data', 'Initializer'))
+const initialize = Initializer.initialize
 const traverse = Initializer.traverse
 const assign = Initializer.assign
 const select = Initializer.select
 const map = Initializer.map
+const project = Initializer.project
 const getDeepProperty = Initializer.getDeepProperty
 const setDeepProperty = Initializer.setDeepProperty
 
@@ -317,7 +319,33 @@ describe('Initializer', () => {
   })
 
   describe('project', () => {
-    it('should be tested')
+    let mapping, source, target
+
+    beforeEach(() => {
+      source = {
+        q: 1,
+        r: { s: 2 }
+      }
+
+      mapping = {
+        'q': 'a',
+        'r.s': 'b.c.d',
+        't': 'e.f'
+      }
+
+      target = {}
+    })
+
+    it('should project properties to an object from a mapping', () => {
+      project(mapping, source, target)
+      target.a.should.equal(1)
+      target.b.c.d.should.equal(2)
+    })
+
+    it('should ignore properties of the source not defined in the mapping', () => {
+      project(mapping, source, target)
+      expect(target.t).to.be.undefined
+    })
   })
 
   describe('select', () => {
@@ -378,7 +406,71 @@ describe('Initializer', () => {
   })
 
   describe('initialize', () => {
-    it('should be tested')
+    let schema, source, target, options
+
+    beforeEach(() => {
+      schema = {}
+      target = {}
+    })
+
+    describe('with mapping option', () => {
+
+      beforeEach(() => {
+        options = {
+          mapping: {}
+        }
+
+        sinon.spy(Initializer, 'map')
+      })
+
+      it('should map the source to the target', () => {
+        Initializer.initialize(schema, source, target, options)
+        Initializer.map.should.have.been.calledWith(options.mapping, {}, target)
+      })
+
+      after(() => {
+        Initializer.map.restore()
+      })
+    })
+
+    describe('with select option', () => {
+
+      beforeEach(() => {
+        options = {
+          select: []
+        }
+
+        sinon.spy(Initializer, 'select')
+      })
+
+      it('should call select over the source object', () => {
+        Initializer.initialize(schema, source, target, options)
+        Initializer.select.should.have.been.calledWith(options.select, {}, target)
+      })
+
+      after(() => {
+        Initializer.select.restore()
+      })
+    })
+
+    describe('with no option', () => {
+
+      beforeEach(() => {
+        options = {}
+        sinon.spy(Initializer, 'traverse')
+      })
+
+      it('should traverse the source object', () => {
+        Initializer.initialize(schema, source, target, options)
+        Initializer.traverse.should.have.been.calledWith(schema, {}, target, Initializer.assign, options)
+      })
+
+      after(() => {
+        Initializer.traverse.restore()
+      })
+
+    })
+
   })
 
 })
