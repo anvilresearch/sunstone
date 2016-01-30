@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const injector = require('./injectorInstance')
 const Registry = require('./Registry')

@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const _ = require('lodash')
 const path = require('path')
@@ -13,6 +14,7 @@ const PluginCollection = require('./PluginCollection')
 
 /**
  * Symbols
+ * @ignore
  */
 const plugins = Symbol()
 

@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const _ = require('lodash')
 const DependencyCollection = require('./DependencyCollection')
@@ -9,6 +10,7 @@ const Dependency = require('./Dependency')
 
 /**
  * Symbols
+ * @ignore
  */
 const dependencies = Symbol()
 

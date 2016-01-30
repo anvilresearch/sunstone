@@ -2,6 +2,7 @@
 
 /**
  * Dependencies
+ * @ignore
  */
 const _ = require('lodash')
 const path = require('path')
@@ -10,6 +11,7 @@ const callsite = require('callsite')
 
 /**
  * Symbols
+ * @ignore
  */
 let init = Symbol()
 
