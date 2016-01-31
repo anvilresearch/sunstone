@@ -1,7 +1,7 @@
 ## Sunstone
 
 Sunstone is a library that implements plugin architecture for Nodejs. You can 
-use it to create applications that your users can extend.
+use it to create applications that your users can extend by creating plugins.
 
 ## Plugin Architecture
 
