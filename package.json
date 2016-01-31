@@ -17,6 +17,7 @@
   },
   "homepage": "https://gitlab.com/anvilresearch/sunstone#README",
   "dependencies": {
+    "callsite": "^1.0.0",
     "glob": "^6.0.4",
     "lodash": "^4.0.0",
     "lodash.pluck": "^3.1.2",
