@@ -168,11 +168,10 @@ class Injector {
    * callbacks by name, providing any required dependencies as arguments. It fails
    * silently if no callback is found.
    *
-   * TODO
-   * consider consolidating repeated code in invoke and get into a single 'internal'
-   * function and wrap it for get and invoke functionality
-   *
    * @param {string} name dependency name
+   *
+   * @todo consider consolidating repeated code in invoke and get into a single 'internal'
+   * #todo function and wrap it for get and invoke functionality
    */
   invoke (name) {
     let dependency = this[dependencies][name]

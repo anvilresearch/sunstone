@@ -41,20 +41,20 @@ let init = Symbol()
  *     '<PLUGIN NAME>': '>=1.2.3'
  *   }
  * }
- * 
+ *
  */
 class Plugin {
 
   /**
    * Constructor
-   * 
+   *
    * @description
    * Initialize a new Plugin instance.
-   * 
+   *
    * @param {string} name The name of the plugin
    * @param {object} metadata The plugin metadata
    *
-   */ 
+   */
   constructor (name, metadata) {
     this.name = name
     this.metadata = metadata
@@ -66,7 +66,7 @@ class Plugin {
    * @description
    * Adds dependencies to the injector by loading node modules. Accepts a string,
    * array or object. By passing an object you can alias the package name.
-   * 
+   *
    * @param {string | array | object} modules modules
    *
    * @example <caption>Usage</caption>
@@ -168,7 +168,7 @@ class Plugin {
    * the type "module". This is important to maintain a distinction between
    * components provided by plugins defined in the host (or extending applications)
    * and components that originate from node modules.
-   * 
+   *
    * @param {string} name Dependency name
    * @param {function} fn Factory function
    * @private
@@ -307,7 +307,7 @@ class Plugin {
    * @param {function} fn Mutator function
    *
    * @example <caption>Extending Data Schema</caption>
-   * 
+   *
    * // Given a plugin created as follows
    * sunstone.plugin('Default API', <METADATA>)
    *   .factory('User', function (Resource) {
@@ -412,9 +412,7 @@ class Plugin {
    * injector.find({ type: 'router' })
    * ```
    *
-   * TODO
-   * - there should possibly be a way to create a starter method automatically for
-   *   an assembler to save that boilerplate
+   * @todo there should possibly be a way to create a starter method automatically for an assembler to save that boilerplate
    */
   assembler (name, fn) {
     this.constructor.prototype[name] = fn(injector, this)
@@ -435,7 +433,7 @@ class Plugin {
    * Register an initializer function.
    *
    * @param {function} callback Initializer function
-   * 
+   *
    * @example <caption>Usage</caption>
    *
    * module.exports = function (sunstone) {
@@ -480,7 +478,7 @@ class Plugin {
    * Register an starter function.
    *
    * @param {function} callback Starter function
-   * 
+   *
    * @example <caption>Usage</caption>
    *
    * sunstone.plugin(<NAME>, <METADATA>)
@@ -525,7 +523,7 @@ class Plugin {
    * Register an initializer function.
    *
    * @param {function} callback Stopper function
-   * 
+   *
    * @example <caption>Usage</caption>
    *
    * sunstone.plugin(<NAME>, <METADATA>)

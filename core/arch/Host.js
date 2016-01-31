@@ -16,10 +16,6 @@ const Registry = require('./Registry')
  * registry to find, load, validate and initialize plugins. The run method
  * starts the application.
  *
- * **TODO**
- *   - decide how to handle directory/node_modules configuration
- *   - needs to handle customized plugin directories
- *
  * **Examples**
  *
  * *Host Application*
@@ -48,6 +44,9 @@ const Registry = require('./Registry')
  * ```
  *
  * This class requires the modules {@link Registry}.
+ *
+ * @todo decide how to handle directory/node_modules configuration
+ * @todo needs to handle customized plugin directories
  */
 class Host {
 
@@ -98,8 +97,7 @@ class Host {
   run () {
     injector.get('main')
     this.registry
-      // TODO
-      //.filter({ enabled: true })
+      // @todo .filter({ enabled: true })
       .filter()
       .start()
   }
