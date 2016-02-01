@@ -88,7 +88,9 @@ class Plugin {
    */
   require (modules) {
     if (typeof modules === 'string') {
-      modules = { modules }
+      let name = modules
+      modules = { }
+      modules[name] = name
     }
 
     if (Array.isArray(modules)) {
