@@ -89,7 +89,7 @@ class Plugin {
   require (modules) {
     if (typeof modules === 'string') {
       let name = modules
-      modules = { }
+      modules = {}
       modules[name] = name
     }
 
@@ -97,10 +97,8 @@ class Plugin {
       modules = _.zipObject(modules, modules)
     }
 
-    Object.keys(modules).forEach((key) => {
-      this.module(key, function () {
-        return require(modules[key])
-      })
+    Object.keys(modules).forEach(key => {
+      this.module(key, modules[key])
     })
 
     return this
@@ -172,15 +170,17 @@ class Plugin {
    * and components that originate from node modules.
    *
    * @param {string} name Dependency name
-   * @param {function} fn Factory function
+   * @param {string} node_module Name of external node dependency
    * @private
    */
-  module (name, fn) {
+  module (name, node_module) {
     injector.register({
       name,
       type: 'module',
       plugin: this.name,
-      fn
+      fn: function () {
+        return require(node_module)
+      }
     })
   }
 
