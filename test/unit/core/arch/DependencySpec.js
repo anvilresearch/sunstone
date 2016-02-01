@@ -35,4 +35,11 @@ describe('Dependency', () => {
     })
   })
 
+  describe('schema', () => {
+    it('should require a name')
+    it('should require a type')
+    it('should require a plugin')
+    it('should require a factory function or a value')
+  })
+
 })
