@@ -25,11 +25,6 @@ const Injector = require(path.join(cwd, 'core', 'arch', 'Injector'))
  * Tests
  */
 describe('Injector', () => {
-  describe('constructor', () => {
-    it('should initialize dependencies')
-    it('')
-  })
-
   describe('register', () => {
     it('should register the dependency on the injector')
   })
@@ -58,7 +53,10 @@ describe('Injector', () => {
       it('should do nothing')
     })
 
-    it('should invoke a callback on the injector')
+    describe('with a valid dependency name', () => {
+      it('should invoke a callback on the injector')  
+    })
+    
   })
 
   describe('filter', () => {
