@@ -78,12 +78,11 @@ class Registry {
    * @param {object} options options object
    */
   constructor (options) {
-    this.options = options
     this[plugins] = {}
     this.prioritized = new PluginCollection()
-    this.directories = [
+    this.directories = _.uniq(options.directories || [
       path.join(process.cwd(), 'plugins')
-    ]
+    ])
   }
 
   /**
