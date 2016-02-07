@@ -1,4 +1,4 @@
 'use strict'
 
-module.exports = require('./core/arch/Host')
+module.exports = require('./src/arch/Host')
 

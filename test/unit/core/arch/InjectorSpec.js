@@ -19,7 +19,7 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Injector = require(path.join(cwd, 'core', 'arch', 'Injector'))
+const Injector = require(path.join(cwd, 'src', 'arch', 'Injector'))
 
 /**
  * Tests
@@ -43,9 +43,9 @@ describe('Injector', () => {
         it('should invoke the dependency\'s factory function')
         it('should return the dependency value')
       })
-      
+
     })
-    
+
   })
 
   describe('invoke', () => {
@@ -54,9 +54,9 @@ describe('Injector', () => {
     })
 
     describe('with a valid dependency name', () => {
-      it('should invoke a callback on the injector')  
+      it('should invoke a callback on the injector')
     })
-    
+
   })
 
   describe('filter', () => {

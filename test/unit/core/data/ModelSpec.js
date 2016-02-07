@@ -19,8 +19,8 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Model = require(path.join(cwd, 'core', 'data', 'Model'))
-const ValidationError = require(path.join(cwd, 'core', 'data', 'validator'))
+const Model = require(path.join(cwd, 'src', 'data', 'Model'))
+const ValidationError = require(path.join(cwd, 'src', 'data', 'validator'))
   .ValidationError
 
 /**

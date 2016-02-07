@@ -19,7 +19,7 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Registry = require(path.join(cwd, 'core', 'arch', 'Registry'))
+const Registry = require(path.join(cwd, 'src', 'arch', 'Registry'))
 
 /**
  * Tests

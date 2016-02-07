@@ -18,7 +18,7 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Initializer = require(path.join(process.cwd(), 'core', 'data', 'Initializer'))
+const Initializer = require(path.join(process.cwd(), 'src', 'data', 'Initializer'))
 const initialize = Initializer.initialize
 const traverse = Initializer.traverse
 const assign = Initializer.assign

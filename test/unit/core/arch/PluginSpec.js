@@ -19,7 +19,7 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Plugin = require(path.join(cwd, 'core', 'arch', 'Plugin'))
+const Plugin = require(path.join(cwd, 'src', 'arch', 'Plugin'))
 
 /**
  * Tests
@@ -33,7 +33,7 @@ describe('Plugin', () => {
     },
   }
 
-  const injector = require(path.join(cwd, 'core', 'arch', 'injectorInstance'))
+  const injector = require(path.join(cwd, 'src', 'arch', 'injectorInstance'))
 
   describe('constructor', () => {
     let examplePlugin

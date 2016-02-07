@@ -9,8 +9,8 @@ const chai = require('chai')
 const sinon = require('sinon')
 const sinonChai = require('sinon-chai')
 const _ = require('lodash')
-const Plugin = require(path.join(cwd, 'core', 'arch', 'Plugin'))
-const Dependency = require(path.join(cwd, 'core', 'arch', 'Dependency'))
+const Plugin = require(path.join(cwd, 'src', 'arch', 'Plugin'))
+const Dependency = require(path.join(cwd, 'src', 'arch', 'Dependency'))
 
 /**
  * Assertions
@@ -22,9 +22,9 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Collection = require(path.join(cwd, 'core', 'arch', 'Collection'))
-const PluginCollection = require(path.join(cwd, 'core', 'arch', 'PluginCollection'))
-const DependencyCollection = require(path.join(cwd, 'core', 'arch', 'DependencyCollection'))
+const Collection = require(path.join(cwd, 'src', 'arch', 'Collection'))
+const PluginCollection = require(path.join(cwd, 'src', 'arch', 'PluginCollection'))
+const DependencyCollection = require(path.join(cwd, 'src', 'arch', 'DependencyCollection'))
 
 /**
  * Tests
@@ -177,7 +177,7 @@ describe('DependencyCollection', () => {
   describe('values', () => {
     let collection
     let depNames = ['Dep1', 'Dep2']
-    let injector = require(path.join(cwd, 'core', 'arch', 'injectorInstance'))
+    let injector = require(path.join(cwd, 'src', 'arch', 'injectorInstance'))
 
     depNames.forEach(name => {
       injector.register({

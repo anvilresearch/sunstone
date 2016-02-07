@@ -19,7 +19,7 @@ let expect = chai.expect
 /**
  * Code under test
  */
-const Dependency = require(path.join(cwd, 'core', 'arch', 'Dependency'))
+const Dependency = require(path.join(cwd, 'src', 'arch', 'Dependency'))
 
 /**
  * Tests
