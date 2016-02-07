@@ -3,7 +3,6 @@
 /**
  * Local dependencies
  */
-const Collection = require('./Collection')
 const Initializer = require('./Initializer')
 const Validator = require('./validator')
 
@@ -51,7 +50,7 @@ class Model {
       if (options.first) {
         return Class.initialize(data[0], options)
       } else {
-        return new Collection(Class, data, options)
+        return data
       }
     }
 
