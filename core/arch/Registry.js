@@ -151,8 +151,7 @@ class Registry {
     this.files = this.directories.reduce((results, directory) => {
       let pattern = path.join(directory, '**/index.js')
       let files = glob.sync(path.resolve(pattern))
-      files.forEach(filename => results.push(filename))
-      return results
+      return results.concat(files)
     }, [])
 
     return this
