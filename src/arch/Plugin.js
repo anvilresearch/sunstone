@@ -51,8 +51,8 @@ class Plugin {
    * @description
    * Initialize a new Plugin instance.
    *
-   * @param {string} name The name of the plugin
-   * @param {object} metadata The plugin metadata
+   * @param {string} name - The name of the plugin
+   * @param {Object} metadata - The plugin metadata
    *
    */
   constructor (name, metadata) {
@@ -67,24 +67,26 @@ class Plugin {
    * Adds dependencies to the injector by loading node modules. Accepts a string,
    * array or object. By passing an object you can alias the package name.
    *
-   * @param {string | array | object} modules modules
+   * @param {(string|Array|Object)} modules - Modules to require
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
    * sunstone.plugin(<NAME>, <METADATA>)
-   *   .require('express')
+   *   .initializer(function (plugin) {
+   *     plugin.require('express')
    *
-   *   .require([
-   *     'crypto',
-   *     'ioredis'
-   *   ])
+   *     plugin.require([
+   *       'crypto',
+   *       'ioredis'
+   *     ])
    *
-   *   .require({
-   *     '_': 'lodash',
-   *     'fs': 'fs-extra',
-   *     'myLibrary': './myLibrary'
+   *     plugin.require({
+   *       '_': 'lodash',
+   *       'fs': 'fs-extra',
+   *       'myLibrary': './myLibrary'
+   *     })
    *   })
-   *
    */
   require (modules) {
     if (typeof modules === 'string') {
@@ -114,7 +116,8 @@ class Plugin {
    * include method. This allows developers to separate out one plugin into an
    * arbitrary number of files.
    *
-   * @param {string} filename Relative path to included file.
+   * @param {string} filename - Relative path to included file.
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
@@ -169,8 +172,8 @@ class Plugin {
    * components provided by plugins defined in the host (or extending applications)
    * and components that originate from node modules.
    *
-   * @param {string} name Dependency name
-   * @param {string} node_module Name of external node dependency
+   * @param {string} name - Dependency name
+   * @param {string} node_module - Name of external node dependency
    * @private
    */
   module (name, node_module) {
@@ -198,8 +201,9 @@ class Plugin {
    * Getting a dependency from the Injector invokes the function and stores the return
    * value.
    *
-   * @param {string} name Dependency name
-   * @param {function} fn Factory function
+   * @param {string} name - Dependency name
+   * @param {Function} fn - Factory function
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
@@ -233,12 +237,13 @@ class Plugin {
    * Create factories that determine which implementation
    * to use at injection time.
    *
-   * @param {string} name Dependency name
-   * @param {function} fn Factory function
+   * @param {string} name - Dependency name
+   * @param {Function} fn - Factory function
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
-   * sunstone.plugin(<NAME>, <METADATA>)
+   * plugin
    *   .factory('RedisResource', function () {})
    *   .factory('MongoResource', function () {})
    *   .adapter('Resource', function (injector, settings) {
@@ -269,18 +274,17 @@ class Plugin {
    * aliased dependency and creates a reference to the instance
    * in the dependency.value field.
    *
-   * @param {string} alias New dependency name
-   * @param {string} name Existing dependency name
+   * @param {string} alias - New dependency name
+   * @param {string} name - Existing dependency name
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
-   * sunstone.plugin(<NAME>, <METADATA)
-   * .factory('myDependency', function () {
-   *   // ...
-   * })
-   *
-   * .alias('myAlias', 'myDependency')
-   *
+   * plugin
+   *   .factory('myDependency', function () {
+   *     // ...
+   *   })
+   *   .alias('myAlias', 'myDependency')
    */
   alias (alias, name) {
     injector.register({
@@ -305,45 +309,54 @@ class Plugin {
    * This is useful for things like modifying a model's schema or
    * registering event handlers on an event emitter.
    *
-   * @param {string} name Dependency name
-   * @param {function} fn Mutator function
+   * @param {string} name - Dependency name
+   * @param {Function} fn - Mutator function
+   * @returns {this}
    *
    * @example <caption>Extending Data Schema</caption>
    *
    * // Given a plugin created as follows
    * sunstone.plugin('Default API', <METADATA>)
-   *   .factory('User', function (Resource) {
-   *     class User extends Resource {
-   *       static get schema () {
-   *         return Object.assign({}, super.schema, {
-   *           name: { type: 'string' },
-   *           email: { type: 'string', format: 'email' }
-   *         })
+   *   .initializer(function (plugin) {
+   *     .factory('User', function (Resource) {
+   *       class User extends Resource {
+   *         static get schema () {
+   *           return Object.assign({}, super.schema, {
+   *             name: { type: 'string' },
+   *             email: { type: 'string', format: 'email' }
+   *           })
+   *         }
    *       }
-   *     }
    *
-   *     return User
+   *       return User
+   *     })
    *   })
    *
    * sunstone.plugin('My Project', <METADATA>)
-   *   .extension('UserExtension', function (User) {
-   *     User.extendSchema({
-   *       domainSpecificAttribute: { type: 'whatever', ... }
+   *   .initializer(function (plugin) {
+   *     plugin.extension('UserExtension', function (User) {
+   *       User.extendSchema({
+   *         domainSpecificAttribute: { type: 'whatever', ... }
+   *       })
    *     })
    *   })
    *
    * @example <caption>Adding Event Handler</caption>
    *
    * sunstone.plugin(<NAME>, <METADATA>)
-   *   .factory('emitter', function () {
-   *      return new EventEmitter()
+   *   .initializer(function (plugin) {
+   *     plugin.factory('emitter', function () {
+   *       return new EventEmitter()
+   *     })
    *   })
    *
    * sunstone.plugin('My Project', <METADATA>)
-   *   .extension('CustomEventHandlers', function (emitter) {
-   *      emitter.on('ready', function (event) {
-   *        // do something
-   *      })
+   *   .initializer(function (plugin) {
+   *     plugin.extension('CustomEventHandlers', function (emitter) {
+   *       emitter.on('ready', function (event) {
+   *         // do something
+   *       })
+   *     })
    *   })
    */
   extension (name, fn) {
@@ -360,8 +373,9 @@ class Plugin {
   /**
    * Assembler
    *
-   * @param {string} name Dependency name
-   * @param {function} fn Assembler function
+   * @param {string} name - Dependency name
+   * @param {Function} fn - Assembler function
+   * @returns {this}
    *
    * @description
    * This can be used to define new types of components. For example, the core
@@ -373,14 +387,16 @@ class Plugin {
    * sunstone.plugin('server', {
    *   version: '0.0.0'
    * })
-   * .assembler('router', function (injector) {
-   *   let plugin = this
-   *   return function (name, factory) {
-   *     injector.register({
-   *       name,
-   *       type: 'router',
-   *       plugin: plugin.name,
-   *       factory
+   * .initializer(function (plugin) {
+   *   plugin.assembler('router', function (injector) {
+   *     let plugin = this
+   *     return function (name, factory) {
+   *       injector.register({
+   *         name,
+   *         type: 'router',
+   *         plugin: plugin.name,
+   *         factory
+   *       })
    *     })
    *   })
    * })
@@ -392,19 +408,21 @@ class Plugin {
    * sunstone.plugin('other', {
    *   version: '0.0.0'
    * })
-   * .router('SomeRouter', function (Router, SomeResource) {
-   *   let router = new Router()
+   * .initializer(function (plugin) {
+   *   plugin.router('SomeRouter', function (Router, SomeResource) {
+   *     let router = new Router()
    *
-   *   router.get('endpoint', function () {
-   *     SomeResource
-   *       .list(req.query)
-   *       .then(function (results) {
-   *         res.json(results)
-   *       })
-   *       .catch(error => next(error))
+   *     router.get('endpoint', function () {
+   *       SomeResource
+   *         .list(req.query)
+   *         .then(function (results) {
+   *           res.json(results)
+   *         })
+   *         .catch(error => next(error))
+   *     })
+   *
+   *     return router
    *   })
-   *
-   *   return router
    * })
    * ```
    *
@@ -434,7 +452,8 @@ class Plugin {
    * @description
    * Register an initializer function.
    *
-   * @param {function} callback Initializer function
+   * @param {callback} callback - Initializer function
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
@@ -461,7 +480,9 @@ class Plugin {
    * Initialize
    *
    * @description
-   * Invoke the initializer function, if it exists. Fails silently.
+   * Invoke the initializer function, if it exists.
+   *
+   * @returns {this}
    */
   initialize () {
     let fn = this[init]
@@ -479,7 +500,8 @@ class Plugin {
    * @description
    * Register an starter function.
    *
-   * @param {function} callback Starter function
+   * @param {Function} callback - Starter function
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
@@ -511,7 +533,9 @@ class Plugin {
    * Start
    *
    * @description
-   * Invoke the starter function, if it exists. Fails silently.
+   * Invoke the starter function, if it exists.
+   *
+   * @returns {this}
    */
   start () {
     injector.invoke(`${this.name}:starter`)
@@ -524,7 +548,8 @@ class Plugin {
    * @description
    * Register an initializer function.
    *
-   * @param {function} callback Stopper function
+   * @param {Function} callback - Stopper function
+   * @returns {this}
    *
    * @example <caption>Usage</caption>
    *
@@ -551,7 +576,9 @@ class Plugin {
    * Stop
    *
    * @description
-   * Invoke the stopper function, if it exists. Fails silently.
+   * Invoke the stopper function, if it exists.
+   *
+   * @returns {this}
    */
   stop () {
     injector.invoke(`${this.name}:stopper`)
