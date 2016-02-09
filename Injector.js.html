@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Injector.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Injector.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+/**
+ * Dependencies
+ * @ignore
+ */
+const _ = require('lodash')
+const DependencyCollection = require('./DependencyCollection')
+const Dependency = require('./Dependency')
+
+/**
+ * Symbols
+ * @ignore
+ */
+const dependencies = Symbol()
+
+/**
+ * Injector
+ *
+ * @class
+ * Dependencies are registered and maintained in memory by the Injector.
+ *
+ * Registering a dependency on the Injector validates it and determines which other
+ * dependencies it requires. This does not invoke the `fn` property, if one is
+ * provided.
+ *
+ * ```js
+ * injector.register({
+ *   name: 'server',
+ *   type: 'factory',
+ *   plugin: '&lt;plugin.name>',
+ *   fn: function (express, logger) {
+ *     let server = express()
+ *     server.use(logger)
+ *     return server
+ *   }
+ * })
+ * ```
+ *
+ * Getting a dependency from the Injector invokes the dependency's `fn` property as
+ * a function and caches the return value on the `value` property for future calls
+ * to `get`. This recursively satisfies the requirements of `fn`.
+ *
+ * ```js
+ * injector.get('server')
+ * => server
+
+ * // this caches the return value of `fn` as `value`
+ * => Dependency {
+ *      name: 'server',
+ *      type: 'factory',
+ *      plugin: '&lt;plugin.name>',
+ *      fn: function (express, logger) { ... },
+ *      value: server
+ *    }
+ * ```
+ *
+ * Invoking a dependency calls it's `fn` property as a function, without caching or
+ * returning a result.
+ *
+ * ```js
+ * injector.register({
+ *   name: 'server:starter',
+ *   type: 'callback',
+ *   plugin: 'server',
+ *   fn: function (server) {
+ *     server.listen()
+ *   }
+ * })
+ *
+ * injector.invoke('server:starter')
+ * ```
+ *
+ * Filtering a dependency returns a DependencyCollection instance filtered by a
+ * predicate.
+ *
+ * ```js
+ * injector.filter({ type: 'factory', plugin: 'MyPlugin' })
+ * => DependencyCollection [
+ *      Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *      Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *      Dependency { type: 'factory', plugin: 'MyPlugin', ... },
+ *      // ...
+ *    ]
+ * ```
+ */
+class Injector {
+
+  /**
+   * Constructor
+   *
+   * @description Initialize the injector with a reference to itself as a dependency.
+   */
+  constructor () {
+    this[dependencies] = {
+      // Allow the injection of the injector itself
+      injector: {
+        name: 'injector',
+        value: this
+      }
+    }
+  }
+
+  /**
+   * Register
+   *
+   * @description Register a Dependency instance on the injector without invoking its
+   * factory function.
+   * @param {Object} descriptor - Dependency properties
+   */
+  register (descriptor) {
+    let dependency = new Dependency(descriptor)
+    let validation = dependency.validate()
+
+    if (validation.valid) {
+      dependency.extractDependencies()
+      this[dependencies][dependency.name] = dependency
+    } else {
+      console.log(`Dependency[${dependency.name}]: `, validation.message)
+      Object.keys(validation.errors).forEach(key => {
+        console.log(`${key}: ${validation.errors[key].message}`)
+      })
+    }
+  }
+
+  /**
+   * Get
+   *
+   * @description
+   * Get a dependency from the injector by invoking it's function or value property.
+   * @param {string} name - Dependency name
+   * @returns {*}
+   */
+  get (name) {
+    let dependency = this[dependencies][name]
+
+    if (!dependency) {
+      // is there any case for failing silently?
+      // logging an error?
+      // or should we just explode?
+      throw new Error(`Unknown dependency "${name}"`)
+    }
+
+    let value = dependency.value
+
+    if (!value) {
+      let values = []
+      let fn = dependency.fn
+      dependency.dependencies.forEach((dependency) => {
+        values.push(this.get(dependency))
+      })
+
+      value = dependency.value = fn.apply(null, values)
+
+      // check the interface and invoke additional methods?
+
+      return value
+    } else {
+      return value
+    }
+  }
+
+  /**
+   * Invoke
+   *
+   * @description
+   * Lifecycle callbacks which use dependencies on the injector, but return no values
+   * can be registered on the injector for event handling. This method invokes such
+   * callbacks by name, providing any required dependencies as arguments. It fails
+   * silently if no callback is found.
+   *
+   * @param {string} name - Dependency name
+   *
+   * @todo consider consolidating repeated code in invoke and get into a single 'internal'
+   * #todo function and wrap it for get and invoke functionality
+   */
+  invoke (name) {
+    let dependency = this[dependencies][name]
+
+    if (dependency) {
+      let values = []
+      let fn = dependency.fn
+
+      dependency.dependencies.forEach(item => {
+        values.push(this.get(item))
+      })
+
+      fn.apply(null, values)
+    }
+  }
+
+  /**
+   * Filter
+   *
+   *
+   * @description Query the injector for dependencies matching a predicate
+   * @param {(Object|function)} predicate - Description or function for matching dependencies
+   * @returns {DependencyCollection}
+   */
+  filter (predicate) {
+    let collection = new DependencyCollection(this[dependencies])
+    return collection.filter(predicate)
+  }
+
+}
+
+module.exports = Injector
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Collection.html">Collection</a></li><li><a href="Dependency.html">Dependency</a></li><li><a href="DependencyCollection.html">DependencyCollection</a></li><li><a href="Host.html">Host</a></li><li><a href="Injector.html">Injector</a></li><li><a href="Plugin.html">Plugin</a></li><li><a href="PluginCollection.html">PluginCollection</a></li><li><a href="Registry.html">Registry</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 09 2016 11:07:55 GMT-0800 (PST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
