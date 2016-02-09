@@ -93,6 +93,18 @@ module.exports = require('sunstone').bootstrap({
 })
 ```
 
+The above code should live in a file referenced as `main` in your `package.json`:
+
+```json
+{
+  "name": "your-app",
+  "version": "0.1.0",
+  "description": "An app that can be extended with plugins",
+  "main": "index.js",
+  // ...
+}
+```
+
 ### Setting up an extending application
 
 Once you've created a host application and made it available as a npm package,
@@ -101,7 +113,7 @@ configured plugins directory.
 
 ```javascript
 // require the app you want to extend and run it
-require('sunstone-example-host').run()
+require('your-app').run()
 ```
 
 ### Creating plugins
