@@ -21,14 +21,10 @@ const Registry = require('./Registry')
  * *Host Application*
  *
  * ```js
- * module.exports = require('sunstone').configure({
+ * module.exports = require('sunstone').bootstrap({
  *   directories: [
  *     path.join(__dirname, 'plugins'),
  *     path.join(process.cwd(), 'plugins')
- *   ],
- *   node_modules: [
- *     'sunstone-server',
- *     'sunstone-logger'
  *   ]
  * })
  * ```
@@ -36,11 +32,7 @@ const Registry = require('./Registry')
  * *Extending Application*
  *
  * ```js
- * require('my-app').bootstrap({
- *   directories: [
- *     other
- *   ]
- * }).run()
+ * require('my-app').run()
  * ```
  *
  * This class requires the modules {@link Registry}.
