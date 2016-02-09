@@ -165,7 +165,7 @@ module.exports = function (app) {
 
 ### Using the plugin API
 
-See the full documentation.
+See the full [API documentation](http://anvilresearch.github.io/sunstone/).
 
 
 ## MIT License
