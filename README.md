@@ -77,38 +77,31 @@ $ npm install --save sunstone
 
 ### Setting up a host application
 
-```javascript
-'use strict'
+Creating your host application is as easy as requiring `sunstone`, configuring 
+the directories to search for plugins, and exporting the resulting application.
+All additional application logic lives in plugins.
 
+```javascript
 var path = require('path')
 
 // Create a new host application and configure the plugin directories
-var app = require('sunstone').bootstrap({
+module.exports = require('sunstone').bootstrap({
   directories: [
-    path.join(__dirname, 'plugins'),
-    path.join(process.cwd(), 'plugins')
+    path.join(__dirname, 'plugins'),      // built-in plugins
+    path.join(process.cwd(), 'plugins')   // user extensions
   ]
 })
-
-// If this module is running from the console, run the application.
-// Otherwise, export the app to be extended.
-if (!module.parent) {
-    app.run()
-} else {
-    module.exports = app
-}
 ```
 
 ### Setting up an extending application
 
+Once you've created a host application and made it available as a npm package,
+it can be run with one line of code. All extensions are plugins and live in the 
+configured plugins directory.
+
 ```javascript
-'use strict'
-
-// require the app you want to extend
-const app = require('sunstone-example-host')
-
-// start the app
-app.run()
+// require the app you want to extend and run it
+require('sunstone-example-host').run()
 ```
 
 ### Creating plugins
