@@ -1,7 +1,7 @@
 {
   "name": "sunstone",
   "version": "0.0.0",
-  "description": "",
+  "description": "Plugin architecture with dependency injection for Node.js",
   "main": "index.js",
   "scripts": {
     "test": "mocha -w"
