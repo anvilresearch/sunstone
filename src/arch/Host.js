@@ -47,7 +47,7 @@ class Host {
    * @description
    * Initialize a Host.
    *
-   * @param {object} options options object
+   * @param {Object} options - Options object
    * @requires Registry
    */
   constructor (options) {
@@ -64,7 +64,7 @@ class Host {
    * Create a new Host instance with the provided options and initialize the
    * application.
    *
-   * @param {object} options options object
+   * @param {Object} options - Options object
    */
   static bootstrap (options) {
     let host = new Host(options)

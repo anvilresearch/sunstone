@@ -128,7 +128,7 @@ class Injector {
    *
    * @description
    * Get a dependency from the injector by invoking it's function or value property.
-   * @param {string} name - dependency name
+   * @param {string} name - Dependency name
    * @returns {*}
    */
   get (name) {
