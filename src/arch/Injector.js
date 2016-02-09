@@ -106,7 +106,7 @@ class Injector {
    *
    * @description Register a Dependency instance on the injector without invoking its
    * factory function.
-   * @param {object} descriptor dependency properties
+   * @param {Object} descriptor - Dependency properties
    */
   register (descriptor) {
     let dependency = new Dependency(descriptor)
@@ -128,7 +128,8 @@ class Injector {
    *
    * @description
    * Get a dependency from the injector by invoking it's function or value property.
-   * @param {string} name dependency name
+   * @param {string} name - dependency name
+   * @returns {*}
    */
   get (name) {
     let dependency = this[dependencies][name]
@@ -168,7 +169,7 @@ class Injector {
    * callbacks by name, providing any required dependencies as arguments. It fails
    * silently if no callback is found.
    *
-   * @param {string} name dependency name
+   * @param {string} name - Dependency name
    *
    * @todo consider consolidating repeated code in invoke and get into a single 'internal'
    * #todo function and wrap it for get and invoke functionality
@@ -193,7 +194,7 @@ class Injector {
    *
    *
    * @description Query the injector for dependencies matching a predicate
-   * @param {object|function} predicate description or function for matching dependencies
+   * @param {(Object|function)} predicate - Description or function for matching dependencies
    * @returns {DependencyCollection}
    */
   filter (predicate) {

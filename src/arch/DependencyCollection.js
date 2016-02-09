@@ -9,7 +9,7 @@ const Collection = require('./Collection')
 
 /**
  * Dependency Collection
- * 
+ *
  * @class
  * Results container for results of querying injector dependencies.
  *
@@ -32,17 +32,17 @@ const Collection = require('./Collection')
  * dc.filter({ type: 'factory' }).values()
  * ```
  * @extends Collection
- * @param {collection} collection Base collection
+ * @param {Dependency[]} collection - Base collection
  */
 class DependencyCollection extends Collection {
 
   /**
    * Values
-   * 
+   *
    * @description
    * Iterate through current contents of the collection and return the
    * relative instances from the injector.
-   * 
+   *
    * @returns {Array}
    */
   values () {

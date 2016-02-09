@@ -12,8 +12,6 @@ const _ = require('lodash')
  * A collection of values with some additional logic in the form
  * of the ```.filter()``` method. Used as a generic for
  * {@link PluginCollection} and {@link DependencyCollection}
- * 
- * @param {collection} collection Base collection
  *
  * @extends Array
  */
@@ -24,10 +22,12 @@ class Collection extends Array {
    *
    * @description
    * Initialize a new collection.
+   *
+   * @param {(Object|Array)} collection - Base collection
    */
   constructor (collection) {
     super()
-    
+
     _.values(collection).forEach(item => {
       this.push(item)
     })
@@ -39,10 +39,10 @@ class Collection extends Array {
    * @description
    * Filter the current collection and return a new collection
    * (of the same type) containing items matching the predicate.
-   * 
-   * @param {object | function} predicate Lodash-style predicate
-   * 
-   * @returns {Collection}
+   *
+   * @param {(Object|function)} predicate - Lodash-style predicate
+   *
+   * @returns {Array}
    */
   filter (predicate) {
     return new this.constructor(_.filter(this, predicate))

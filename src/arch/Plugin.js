@@ -202,7 +202,7 @@ class Plugin {
    * value.
    *
    * @param {string} name - Dependency name
-   * @param {Function} fn - Factory function
+   * @param {function} fn - Factory function
    * @returns {this}
    *
    * @example <caption>Usage</caption>
@@ -238,7 +238,7 @@ class Plugin {
    * to use at injection time.
    *
    * @param {string} name - Dependency name
-   * @param {Function} fn - Factory function
+   * @param {function} fn - Factory function
    * @returns {this}
    *
    * @example <caption>Usage</caption>
@@ -310,7 +310,7 @@ class Plugin {
    * registering event handlers on an event emitter.
    *
    * @param {string} name - Dependency name
-   * @param {Function} fn - Mutator function
+   * @param {function} fn - Mutator function
    * @returns {this}
    *
    * @example <caption>Extending Data Schema</caption>
@@ -374,7 +374,7 @@ class Plugin {
    * Assembler
    *
    * @param {string} name - Dependency name
-   * @param {Function} fn - Assembler function
+   * @param {function} fn - Assembler function
    * @returns {this}
    *
    * @description
@@ -500,7 +500,7 @@ class Plugin {
    * @description
    * Register an starter function.
    *
-   * @param {Function} callback - Starter function
+   * @param {function} callback - Starter function
    * @returns {this}
    *
    * @example <caption>Usage</caption>
@@ -548,7 +548,7 @@ class Plugin {
    * @description
    * Register an initializer function.
    *
-   * @param {Function} callback - Stopper function
+   * @param {function} callback - Stopper function
    * @returns {this}
    *
    * @example <caption>Usage</caption>

@@ -23,7 +23,7 @@ const STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg
  * Instances of Dependency are self-validating containers for
  * dependencies registered on the injector.
  *
- * @param {object} descriptor Dependency descriptor
+ * @param {Object} descriptor - Dependency descriptor
  *
  * @extends Model
  */
@@ -48,7 +48,7 @@ class Dependency extends Model {
    * @description
    * Parse dependencies and store them as an array of dependency
    * names on this instance.
-   * 
+   *
    */
   extractDependencies () {
     if (this.fn && !this.dependencies) {
@@ -64,7 +64,7 @@ class Dependency extends Model {
 
     /**
      * conform
-     * 
+     *
      * validation function for factory function and value on schema
      */
     function conform (value, instance) {
@@ -81,7 +81,7 @@ class Dependency extends Model {
 
     // a standardised conformer property for factory function (fn)
     // and value on schema
-    let conformer = { 
+    let conformer = {
       type: 'any',
       conform,
       messages: {

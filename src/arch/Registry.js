@@ -75,7 +75,7 @@ class Registry {
    * constructor
    *
    * @description Initialize a Registry instance.
-   * @param {object} options options object
+   * @param {Object} options - Options object
    */
   constructor (options) {
     this[plugins] = {}
@@ -89,7 +89,7 @@ class Registry {
    * get
    *
    * @description Retrieve a plugin from the registry.
-   * @param {string} name name of the plugin
+   * @param {string} name - name of the plugin
    * @returns {Plugin}
    */
   get (name) {
@@ -100,8 +100,8 @@ class Registry {
    * set
    *
    * @description Set a plugin on the registry.
-   * @param {string} name name of the plugin
-   * @param {Plugin} plugin name of the plugin
+   * @param {string} name - Name of the plugin
+   * @param {Plugin} plugin - Name of the plugin
    * @returns {Plugin}
    */
   set (name, plugin) {
@@ -118,7 +118,7 @@ class Registry {
    * del
    *
    * @description Remove a plugin from the registry.
-   * @param {string} name name of the plugin
+   * @param {string} name - Name of the plugin
    * @returns {Plugin}
    */
   del (name) {
@@ -129,7 +129,7 @@ class Registry {
    * filter
    *
    * @description Query the registry for plugins matching a predicate
-   * @param {object|function} predicate description or function for matching plugins
+   * @param {(Object|function)} predicate - Description or function for matching plugins
    * @returns {PluginCollection}
    *
    * @example <caption>Object predicate</caption>
@@ -287,8 +287,8 @@ class Registry {
    * @description
    * Register or retrieve a plugin from the injector with a name and metadata object.
    *
-   * @param {string} name plugin name
-   * @param {object} metadata plugin metadata
+   * @param {string} name - Plugin name
+   * @param {Object} metadata - Plugin metadata
    * @returns {Plugin}
    */
   plugin (name, metadata) {
