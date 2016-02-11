@@ -13,16 +13,16 @@ use it to [create applications that your users can extend][intro] by creating pl
 
 ## Plugin Architecture
 
-The primary goal of a plugin architecture is extensibility; the ability to
-customize or add new features to software without modifying it's source code.
-Plugins provide extensibility through modularity and by establishing well-
-defined interfaces for programming with the host application's internal
-components.
+The primary goal of a plugin architecture is extensibility; the ability to 
+customize or add new features to software without modifying its source code. 
+Plugins provide extensibility through modularity and by establishing well-defined 
+interfaces for programming with the host application's internal components.
 
-The modularity offered by plugins makes it possible to write large and complex
-programs. But it also helps to manage project scope, since every possible
-contingency for user requirements need not be planned for in advance. Users can
-obtain plugins created by third-party developers and even write their own.
+The feature-level modularity offered by plugins makes writing large and complex 
+programs more feasible. But it also helps to manage project scope, since every 
+possible contingency for user requirements need not be planned for in advance. 
+Users can obtain plugins created by third-party developers and even write their 
+own. Open source and proprietary code can even coexist.
 
 ### Dependency Injection
 
