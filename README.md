@@ -22,31 +22,17 @@ The feature-level modularity offered by plugins makes writing large and complex
 programs more feasible. But it also helps to manage project scope, since every 
 possible contingency for user requirements need not be planned for in advance. 
 Users can obtain plugins created by third-party developers and even write their 
-own. Open source and proprietary code can even coexist.
+own.
 
-### Dependency Injection
+Sunstone aims to provide all the necessities for a successful plugin ecosystem: 
+feature-level modularity, versioning, dependency and lifecycle management, 
+component-level security, organizational conventions, and well-defined programming 
+interfaces.
 
-Nodejs' built in module system isn't adequate for a plugin architecture, because
-it would require the plugin developer to have knowledge of how the host
-application and even other plugins are implemented. Dependency injection solves
-this problem by abstracting the details of how to obtain plugin-component-level
-dependencies for use in other plugins. Sunstone's DI implementation borrows
-elements of the programming interface from AngularJS.
-
-### Lifecycle Management
-
-Plugins have a lifecycle that can be controlled during runtime. This enables
-features to be added and removed without restarting the application.
-
-### Plugin Dependencies & Versioning
-
-* Plugins are versioned and can depend on other plugins.
-
-### Plugin Security
-
-* Plugins can expose or protect components
-* Plugins are verified with signatures and checksums
-* Plugins be required to have permission to run
+Sunstone’s internal design is inspired by the Eclipse plugin model, and it’s API is 
+modeled after AngularJS’ dependency injection. The former addresses application-level 
+extensibility while the latter provides a programming interface that’s familiar and 
+easy to learn.
 
 ## Completed Work
 
