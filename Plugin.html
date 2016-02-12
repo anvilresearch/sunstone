@@ -365,7 +365,7 @@ to use at injection time.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line256">line 256</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line257">line 257</a>
     </li></ul></dd>
     
 
@@ -555,7 +555,7 @@ in the dependency.value field.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line289">line 289</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line290">line 290</a>
     </li></ul></dd>
     
 
@@ -626,7 +626,7 @@ in the dependency.value field.</p>
 framework probably doesn't need any knowledge of Express routers, but if you
 wanted to define a specialized factory registrar for routers, you could do it
 like so:</p>
-<pre class="prettyprint source lang-js"><code>sunstone.plugin('server', {
+<pre class="prettyprint source lang-js"><code>app.plugin('server', {
   version: '0.0.0'
 })
 .initializer(function (plugin) {
@@ -642,7 +642,7 @@ like so:</p>
     })
   })
 })</code></pre><p>This makes a new dependency registrar called 'router' that can be used as follows:</p>
-<pre class="prettyprint source lang-js"><code>sunstone.plugin('other', {
+<pre class="prettyprint source lang-js"><code>app.plugin('other', {
   version: '0.0.0'
 })
 .initializer(function (plugin) {
@@ -661,7 +661,7 @@ like so:</p>
     return router
   })
 })</code></pre><p>The dependency inject can then be queried by this new &quot;type&quot; value.</p>
-<pre class="prettyprint source lang-js"><code>injector.find({ type: 'router' })</code></pre>
+<pre class="prettyprint source lang-js"><code>injector.filter({ type: 'router' })</code></pre>
 </div>
 
 
@@ -777,7 +777,7 @@ like so:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line437">line 437</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line438">line 438</a>
     </li></ul></dd>
     
 
@@ -959,7 +959,7 @@ registering event handlers on an event emitter.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line362">line 362</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line363">line 363</a>
     </li></ul></dd>
     
 
@@ -1007,7 +1007,7 @@ registering event handlers on an event emitter.</p>
         <p class="code-caption">Extending Data Schema</p>
     
     <pre class="prettyprint"><code>// Given a plugin created as follows
-sunstone.plugin('Default API', &lt;METADATA>)
+app.plugin('Default API', &lt;METADATA>)
   .initializer(function (plugin) {
     .factory('User', function (Resource) {
       class User extends Resource {
@@ -1023,7 +1023,7 @@ sunstone.plugin('Default API', &lt;METADATA>)
     })
   })
 
-sunstone.plugin('My Project', &lt;METADATA>)
+app.plugin('My Project', &lt;METADATA>)
   .initializer(function (plugin) {
     plugin.extension('UserExtension', function (User) {
       User.extendSchema({
@@ -1034,14 +1034,14 @@ sunstone.plugin('My Project', &lt;METADATA>)
 
         <p class="code-caption">Adding Event Handler</p>
     
-    <pre class="prettyprint"><code>sunstone.plugin(&lt;NAME>, &lt;METADATA>)
+    <pre class="prettyprint"><code>app.plugin(&lt;NAME>, &lt;METADATA>)
   .initializer(function (plugin) {
     plugin.factory('emitter', function () {
       return new EventEmitter()
     })
   })
 
-sunstone.plugin('My Project', &lt;METADATA>)
+app.plugin('My Project', &lt;METADATA>)
   .initializer(function (plugin) {
     plugin.extension('CustomEventHandlers', function (emitter) {
       emitter.on('ready', function (event) {
@@ -1186,7 +1186,7 @@ value.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line222">line 222</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line223">line 223</a>
     </li></ul></dd>
     
 
@@ -1355,7 +1355,7 @@ arbitrary number of files.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line155">line 155</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line156">line 156</a>
     </li></ul></dd>
     
 
@@ -1406,15 +1406,16 @@ arbitrary number of files.</p>
 'use strict'
 
 module.exports = function (sunstone) {
-  sunstone.plugin('MyResource', {
+  app.plugin('MyResource', {
     version: '0.0.1',
     dependencies: {
       'Server': '0.0.1'
     }
   })
   .initializer(function (plugin) {
-    .include('./other')
-    .include('./yetanother')
+    plugin
+      .include('./other')
+      .include('./yetanother')
   })
 }
 
@@ -1491,7 +1492,7 @@ module.exports = function (plugin) {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line487">line 487</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line488">line 488</a>
     </li></ul></dd>
     
 
@@ -1640,7 +1641,7 @@ module.exports = function (plugin) {
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line474">line 474</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line475">line 475</a>
     </li></ul></dd>
     
 
@@ -1687,8 +1688,8 @@ module.exports = function (plugin) {
     
         <p class="code-caption">Usage</p>
     
-    <pre class="prettyprint"><code>module.exports = function (sunstone) {
-  sunstone.plugin('MyResource', {
+    <pre class="prettyprint"><code>module.exports = function (app) {
+  app.plugin('MyResource', {
     version: '0.0.1',
     dependencies: {
       'Server': '0.0.1'
@@ -1861,7 +1862,7 @@ array or object. By passing an object you can alias the package name.</p>
     
         <p class="code-caption">Usage</p>
     
-    <pre class="prettyprint"><code>sunstone.plugin(&lt;NAME>, &lt;METADATA>)
+    <pre class="prettyprint"><code>app.plugin(&lt;NAME>, &lt;METADATA>)
   .initializer(function (plugin) {
     plugin.require('express')
 
@@ -1935,7 +1936,7 @@ array or object. By passing an object you can alias the package name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line540">line 540</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line541">line 541</a>
     </li></ul></dd>
     
 
@@ -2084,7 +2085,7 @@ array or object. By passing an object you can alias the package name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line521">line 521</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line522">line 522</a>
     </li></ul></dd>
     
 
@@ -2131,11 +2132,11 @@ array or object. By passing an object you can alias the package name.</p>
     
         <p class="code-caption">Usage</p>
     
-    <pre class="prettyprint"><code>sunstone.plugin(&lt;NAME>, &lt;METADATA>)
+    <pre class="prettyprint"><code>app.plugin(&lt;NAME>, &lt;METADATA>)
   .initializer(function (plugin) {
     plugin.starter(function (injector, server) {
       injector
-        .find({ plugin: this.name, type: 'router' })
+        .filter({ plugin: this.name, type: 'router' })
         .values()
         .forEach(router => {
           router.mount(server)
@@ -2201,7 +2202,7 @@ array or object. By passing an object you can alias the package name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line583">line 583</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line584">line 584</a>
     </li></ul></dd>
     
 
@@ -2350,7 +2351,7 @@ array or object. By passing an object you can alias the package name.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line564">line 564</a>
+        <a href="Plugin.js.html">Plugin.js</a>, <a href="Plugin.js.html#line565">line 565</a>
     </li></ul></dd>
     
 
@@ -2397,7 +2398,7 @@ array or object. By passing an object you can alias the package name.</p>
     
         <p class="code-caption">Usage</p>
     
-    <pre class="prettyprint"><code>sunstone.plugin(&lt;NAME>, &lt;METADATA>)
+    <pre class="prettyprint"><code>app.plugin(&lt;NAME>, &lt;METADATA>)
   .initializer(function (plugin) {
     plugin.stopper(function (injector, server) {
       // code to disable plugin
@@ -2428,7 +2429,7 @@ array or object. By passing an object you can alias the package name.</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 09 2016 11:07:55 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 11 2016 21:59:26 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

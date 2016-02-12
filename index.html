@@ -44,32 +44,29 @@
 
     <section>
         <article><h2>Sunstone</h2><p>Sunstone is a library that implements plugin architecture for Nodejs. You can
-use it to create applications that your users can extend by creating plugins.</p>
-<h2>Plugin Architecture</h2><p>The primary goal of a plugin architecture is extensibility; the ability to
-customize or add new features to software without modifying it's source code.
-Plugins provide extensibility through modularity and by establishing well-
-defined interfaces for programming with the host application's internal
-components.</p>
-<p>The modularity offered by plugins makes it possible to write large and complex
-programs. But it also helps to manage project scope, since every possible
-contingency for user requirements need not be planned for in advance. Users can
-obtain plugins created by third-party developers and even write their own.</p>
-<h3>Dependency Injection</h3><p>Nodejs' built in module system isn't adequate for a plugin architecture, because
-it would require the plugin developer to have knowledge of how the host
-application and even other plugins are implemented. Dependency injection solves
-this problem by abstracting the details of how to obtain plugin-component-level
-dependencies for use in other plugins. Sunstone's DI implementation borrows
-elements of the programming interface from AngularJS.</p>
-<h3>Lifecycle Management</h3><p>Plugins have a lifecycle that can be controlled during runtime. This enables
-features to be added and removed without restarting the application.</p>
-<h3>Plugin Dependencies &amp; Versioning</h3><ul>
-<li>Plugins are versioned and can depend on other plugins.</li>
+use it to <a href="https://github.com/anvilresearch/sunstone/wiki/Introducing-Sunstone">create applications that your users can extend</a> by creating plugins.</p>
+<h2>Getting Started</h2><ul>
+<li><a href="https://github.com/anvilresearch/sunstone/wiki/Introducing-Sunstone">Introduction</a></li>
+<li><a href="https://github.com/anvilresearch/sunstone/wiki/Developer-Guide">Developer Guide</a></li>
+<li><a href="http://anvilresearch.github.io/sunstone/">API Documentation</a></li>
 </ul>
-<h3>Plugin Security</h3><ul>
-<li>Plugins can expose or protect components</li>
-<li>Plugins are verified with signatures and checksums</li>
-<li>Plugins be required to have permission to run</li>
-</ul>
+<h2>Plugin Architecture</h2><p>The primary goal of a plugin architecture is extensibility; the ability to 
+customize or add new features to software without modifying its source code. 
+Plugins provide extensibility through modularity and by establishing well-defined 
+interfaces for programming with the host application's internal components.</p>
+<p>The feature-level modularity offered by plugins makes writing large and complex 
+programs more feasible. But it also helps to manage project scope, since every 
+possible contingency for user requirements need not be planned for in advance. 
+Users can obtain plugins created by third-party developers and even write their 
+own.</p>
+<p>Sunstone aims to provide all the necessities for a successful plugin ecosystem: 
+feature-level modularity, versioning, dependency and lifecycle management, 
+component-level security, organizational conventions, and well-defined programming 
+interfaces.</p>
+<p>Sunstone’s internal design is inspired by the Eclipse plugin model, and it’s API is 
+modeled after AngularJS’ dependency injection. The former addresses application-level 
+extensibility while the latter provides a programming interface that’s familiar and 
+easy to learn.</p>
 <h2>Completed Work</h2><ul>
 <li>[x] host application instantiation</li>
 <li>[x] plugin registry</li>
@@ -87,7 +84,7 @@ features to be added and removed without restarting the application.</p>
 <li>[x] configurable plugin directories</li>
 </ul>
 <h2>Remaining Work</h2><ul>
-<li>[ ] unit tests</li>
+<li>[ ] more unit tests</li>
 <li>[ ] plugin loading from npm packages</li>
 <li>[ ] plugin detection/initialization during runtime</li>
 <li>[ ] methods for controlling lifecycle from outside the running application</li>
@@ -95,70 +92,6 @@ features to be added and removed without restarting the application.</p>
 <li>[ ] plugin security</li>
 <li>[ ] ...</li>
 </ul>
-<h2>Usage</h2><h3>Install</h3><pre class="prettyprint source lang-bash"><code>$ npm install --save sunstone</code></pre><h3>Setting up a host application</h3><pre class="prettyprint source lang-javascript"><code>'use strict'
-
-var path = require('path')
-
-// Create a new host application and configure the plugin directories
-var app = require('sunstone').bootstrap({
-  directories: [
-    path.join(__dirname, 'plugins'),
-    path.join(process.cwd(), 'plugins')
-  ]
-})
-
-// If this module is running from the console, run the application.
-// Otherwise, export the app to be extended.
-if (!module.parent) {
-    app.run()
-} else {
-    module.exports = app
-}</code></pre><h3>Setting up an extending application</h3><pre class="prettyprint source lang-javascript"><code>'use strict'
-
-// require the app you want to extend
-const app = require('sunstone-example-host')
-
-// start the app
-app.run()</code></pre><h3>Creating plugins</h3><p>Each plugin is a directory inside one of the configured plugin directories for 
-the host or extending applications. Plugin directories can have an arbitrary 
-number of files in any kind of organization, with only one rule. Each must 
-plugin must include an <code>index.js</code> file at its root level that is used to register 
-the plugin.</p>
-<p>The <code>index.js</code> file must export a function that takes the plugin registry as 
-an argument. The argument can be named anything you want. This might be helpful 
-to developers extending our app with their own plugins. For example, we might 
-want to call our app &quot;anvil&quot;. </p>
-<pre class="prettyprint source lang-javascript"><code>// export a function that takes the plugin registry as an argument
-module.exports = function (anvil) {
-  // ...
-}</code></pre><p>For the remaining examples here, we'll stick to &quot;app&quot;. Plugins are defined 
-inside this exported function by calling <code>app.plugin(&lt;NAME&gt;, &lt;METADATA&gt;)</code>.
-This returns a <code>plugin</code> object providing the API that's used to build up 
-your plugin components and define lifecycle behavior. The most important 
-method provided by <code>plugin</code> is <code>initializer</code>. This method takes a callback
-that acts as a wrapper around the rest of your plugin definition. The 
-'initializer' callback allows plugins to be loaded and have their dependencies 
-resoved before initializing the plugin.</p>
-<pre class="prettyprint source lang-javascript"><code>'use strict'
-
-module.exports = function (app) {
-
-  // define a new plugin by providing a name and metadata
-  app.plugin('feature', {
-    version: '0.1.2',
-    dependencies: {
-      'server': '>=1.0.0'
-    }
-  })
-
-  // this wrapper allows plugins to be loaded before initializing them, 
-  // so that dependencies can be verified
-  .initializer(function (plugin) {
-
-    // use the plugin development API here
-
-  })
-}</code></pre><h3>Using the plugin API</h3><p>See the full documentation.</p>
 <h2>MIT License</h2><p>Copyright (c) 2016 <a href="http://anvil.io">Anvil Research, Inc.</a></p></article>
     </section>
 
@@ -176,7 +109,7 @@ module.exports = function (app) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Feb 09 2016 11:07:55 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 11 2016 21:59:26 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
