@@ -72,7 +72,7 @@ class Plugin {
    *
    * @example <caption>Usage</caption>
    *
-   * sunstone.plugin(<NAME>, <METADATA>)
+   * app.plugin(<NAME>, <METADATA>)
    *   .initializer(function (plugin) {
    *     plugin.require('express')
    *
@@ -125,15 +125,16 @@ class Plugin {
    * 'use strict'
    *
    * module.exports = function (sunstone) {
-   *   sunstone.plugin('MyResource', {
+   *   app.plugin('MyResource', {
    *     version: '0.0.1',
    *     dependencies: {
    *       'Server': '0.0.1'
    *     }
    *   })
    *   .initializer(function (plugin) {
-   *     .include('./other')
-   *     .include('./yetanother')
+   *     plugin
+   *       .include('./other')
+   *       .include('./yetanother')
    *   })
    * }
    *
@@ -316,7 +317,7 @@ class Plugin {
    * @example <caption>Extending Data Schema</caption>
    *
    * // Given a plugin created as follows
-   * sunstone.plugin('Default API', <METADATA>)
+   * app.plugin('Default API', <METADATA>)
    *   .initializer(function (plugin) {
    *     .factory('User', function (Resource) {
    *       class User extends Resource {
@@ -332,7 +333,7 @@ class Plugin {
    *     })
    *   })
    *
-   * sunstone.plugin('My Project', <METADATA>)
+   * app.plugin('My Project', <METADATA>)
    *   .initializer(function (plugin) {
    *     plugin.extension('UserExtension', function (User) {
    *       User.extendSchema({
@@ -343,14 +344,14 @@ class Plugin {
    *
    * @example <caption>Adding Event Handler</caption>
    *
-   * sunstone.plugin(<NAME>, <METADATA>)
+   * app.plugin(<NAME>, <METADATA>)
    *   .initializer(function (plugin) {
    *     plugin.factory('emitter', function () {
    *       return new EventEmitter()
    *     })
    *   })
    *
-   * sunstone.plugin('My Project', <METADATA>)
+   * app.plugin('My Project', <METADATA>)
    *   .initializer(function (plugin) {
    *     plugin.extension('CustomEventHandlers', function (emitter) {
    *       emitter.on('ready', function (event) {
@@ -384,7 +385,7 @@ class Plugin {
    * like so:
    *
    * ```js
-   * sunstone.plugin('server', {
+   * app.plugin('server', {
    *   version: '0.0.0'
    * })
    * .initializer(function (plugin) {
@@ -405,7 +406,7 @@ class Plugin {
    * This makes a new dependency registrar called 'router' that can be used as follows:
    *
    * ```js
-   * sunstone.plugin('other', {
+   * app.plugin('other', {
    *   version: '0.0.0'
    * })
    * .initializer(function (plugin) {
@@ -429,7 +430,7 @@ class Plugin {
    * The dependency inject can then be queried by this new "type" value.
    *
    * ```js
-   * injector.find({ type: 'router' })
+   * injector.filter({ type: 'router' })
    * ```
    *
    * @todo there should possibly be a way to create a starter method automatically for an assembler to save that boilerplate
@@ -457,8 +458,8 @@ class Plugin {
    *
    * @example <caption>Usage</caption>
    *
-   * module.exports = function (sunstone) {
-   *   sunstone.plugin('MyResource', {
+   * module.exports = function (app) {
+   *   app.plugin('MyResource', {
    *     version: '0.0.1',
    *     dependencies: {
    *       'Server': '0.0.1'
@@ -505,11 +506,11 @@ class Plugin {
    *
    * @example <caption>Usage</caption>
    *
-   * sunstone.plugin(<NAME>, <METADATA>)
+   * app.plugin(<NAME>, <METADATA>)
    *   .initializer(function (plugin) {
    *     plugin.starter(function (injector, server) {
    *       injector
-   *         .find({ plugin: this.name, type: 'router' })
+   *         .filter({ plugin: this.name, type: 'router' })
    *         .values()
    *         .forEach(router => {
    *           router.mount(server)
@@ -553,7 +554,7 @@ class Plugin {
    *
    * @example <caption>Usage</caption>
    *
-   * sunstone.plugin(<NAME>, <METADATA>)
+   * app.plugin(<NAME>, <METADATA>)
    *   .initializer(function (plugin) {
    *     plugin.stopper(function (injector, server) {
    *       // code to disable plugin

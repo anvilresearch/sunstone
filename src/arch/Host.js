@@ -65,6 +65,7 @@ class Host {
    * application.
    *
    * @param {Object} options - Options object
+   * @returns {Host}
    */
   static bootstrap (options) {
     let host = new Host(options)
