@@ -124,7 +124,7 @@ class Plugin {
    * // index.js
    * 'use strict'
    *
-   * module.exports = function (sunstone) {
+   * module.exports = function (app) {
    *   app.plugin('MyResource', {
    *     version: '0.0.1',
    *     dependencies: {
